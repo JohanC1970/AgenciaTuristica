@@ -3,6 +3,7 @@ module co.edu.uniquindio.agenciaturistica {  // ¡Este nombre debe usarse en tod
     requires javafx.fxml;
     requires java.sql;
     requires jbcrypt;
+    requires java.mail;
 
     opens co.edu.uniquindio.agenciaturistica.application to javafx.fxml;
     opens co.edu.uniquindio.agenciaturistica.controller to javafx.fxml;
