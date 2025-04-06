@@ -3,6 +3,7 @@ package co.edu.uniquindio.agenciaturistica.model;
 import co.edu.uniquindio.agenciaturistica.model.Enums.Rol;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Usuario {
@@ -14,6 +15,9 @@ public class Usuario {
     private String password;
     private Rol rol;
     private String codigoVerificacion;
+    private LocalDateTime expiracionCodigoVerificacion;
+    private String codigoRecuperacionPassword;
+    private LocalDateTime expiracionCodigoRecuperacion;
     private boolean cuentaVerificada;
     private LocalDate fechaRegistro;
 
@@ -29,6 +33,9 @@ public class Usuario {
         this.rol = rol;
         this.codigoVerificacion = null;
         this.cuentaVerificada = false;
+        this.codigoRecuperacionPassword= null;
+        this.expiracionCodigoRecuperacion= null;
+        this.expiracionCodigoVerificacion = null;
         this.fechaRegistro = LocalDate.now();
     }
 
@@ -104,6 +111,30 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    public String getCodigoRecuperacionPassword() {
+        return codigoRecuperacionPassword;
+    }
+
+    public void setCodigoRecuperacionPassword(String codigoRecuperacionPassword) {
+        this.codigoRecuperacionPassword = codigoRecuperacionPassword;
+    }
+
+    public LocalDateTime getExpiracionCodigoRecuperacion() {
+        return expiracionCodigoRecuperacion;
+    }
+
+    public void setExpiracionCodigoRecuperacion(LocalDateTime expiracionCodigoRecuperacion) {
+        this.expiracionCodigoRecuperacion = expiracionCodigoRecuperacion;
+    }
+
+    public LocalDateTime getExpiracionCodigoVerificacion() {
+        return expiracionCodigoVerificacion;
+    }
+
+    public void setExpiracionCodigoVerificacion(LocalDateTime expiracionCodigoVerificacion) {
+        this.expiracionCodigoVerificacion = expiracionCodigoVerificacion;
     }
 
     @Override
