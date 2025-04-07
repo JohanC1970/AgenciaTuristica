@@ -36,7 +36,7 @@ public class EmailSender {
      * @throws IOException en caso de error al leer la plantilla
      */
 
-    public static boolean enviarEmail(String destinatario, String asunto, String rutaPlantilla, String codigo) throws MessagingException, IOException {
+    public static Respuesta<String> enviarEmail(String destinatario, String asunto, String rutaPlantilla, String codigo) throws MessagingException, IOException {
         try {
             Session session = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -59,10 +59,10 @@ public class EmailSender {
             mensaje.setContent(htmlContent, "text/html; charset=utf-8");
 
             Transport.send(mensaje);
-            return true;
+            return new Respuesta<>(true, "El correo se envió correctamente", null);
         } catch (MessagingException | IOException e) {
-                    e.printStackTrace();
-                    return false;
+            e.printStackTrace();
+            return new Respuesta<>(false, "Error al enviar el correo: " + e.getMessage(), null);
         }
     }
     
