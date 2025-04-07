@@ -21,6 +21,17 @@ public class UsuarioDAO {
         }
     }
 
+    public UsuarioDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
     //---------------AUTENTICACION------------------//
 
     /**
@@ -208,6 +219,13 @@ public class UsuarioDAO {
     public Respuesta<Usuario> registrarUsuario(Usuario usuario) throws SQLException {
         PreparedStatement preparedStatement = null;
         try {
+
+            if(existeEmail(usuario.getEmail())) {
+                return new Respuesta<>(false, "El email ya está registrado en nuestro sistema", null);
+            }
+            if(existeIdentifiacion(usuario.getIdentificacion())){
+                return new Respuesta<>(false, "La identificación ya está registrada en nuestro sistema", null);
+            }
             String query = "INSERT INTO usuario (nombre, apellido, identificacion, email, password, rol) VALUES (?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, usuario.getNombre());
@@ -231,4 +249,23 @@ public class UsuarioDAO {
             }
         }
     }
+
+    /**
+     * Este método permite verificar si la identificación existe en la base de datos.
+     * @param identificacion Identificación a verificar
+     * @return true si la identificación existe, false en caso contrario
+     * @throws SQLException
+     */
+    private boolean existeIdentifiacion(String identificacion) throws SQLException {
+        String query = "SELECT 1 FROM usuario WHERE identicacion = ? LIMIT 1";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, identificacion);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+
 }

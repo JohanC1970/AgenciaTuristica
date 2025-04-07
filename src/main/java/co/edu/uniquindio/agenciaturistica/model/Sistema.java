@@ -29,6 +29,8 @@ public class Sistema {
         this.nombre = nombre;
     }
 
+    //----------METODOS DE INICIO DE SESION-------------------
+
     /**
      * Este método permite iniciar sesión en el sistema.
      * @param email Email de la persona que desea iniciar sesión
@@ -120,6 +122,61 @@ public class Sistema {
         return null;
     }
 
+    //----------METODOS CRUD USUARIO-------------------
+
+    /**
+     * Este método permite registrar un nuevo usuario en el sistema.
+     * @param usuario Usuario a registrar
+     * @return Respuesta<Usuario> Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Usuario>registrarUsuario(Usuario usuario) throws SQLException {
+
+        Respuesta<Usuario> respuestaDatos = validarDatosUsuario(usuario);
+        if(!respuestaDatos.isExito()){
+            return respuestaDatos;
+        }
+        return usuarioDAO.registrarUsuario(usuario);
+    }
+
+    public Respuesta<Usuario> actualizarUsuario(Usuario usuario) throws SQLException {
+        Respuesta<Usuario> respuestaDatos = validarDatosUsuario(usuario);
+        return  null;
+    }
+
+    //----------METODOS DE VALIDACION-------------------
+
+    /**
+     * Este método permite validar que los valores de los atributos del usuario no estén vacíos ni sean nulos.
+     * @param usuario Usuario a validar
+     * @return Respuesta<Usuario> Respuesta con el resultado de la operación
+     */
+    private Respuesta<Usuario> validarDatosUsuario(Usuario usuario) {
+        StringBuilder mensaje = new StringBuilder();
+
+        if (usuario.getNombre() == null || usuario.getNombre().isEmpty()) {
+            mensaje.append("El nombre no puede estar vacío\n");
+        }
+        if (usuario.getApellido() == null || usuario.getApellido().isEmpty()) {
+            mensaje.append("El apellido no puede estar vacío\n");
+        }
+        if (usuario.getIdentificacion() == null || usuario.getIdentificacion().isEmpty()) {
+            mensaje.append("La identificación no puede estar vacía\n");
+        }
+        if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
+            mensaje.append("El email no puede estar vacío\n");
+        }
+        if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
+            mensaje.append("La contraseña no puede estar vacía\n");
+        }
+        if (usuario.getRol() == null) {
+            mensaje.append("El tipo de usuario no puede estar vacío\n");
+        }
+        if (mensaje.length() == 0) {
+            return new Respuesta<>(true, "Los datos son válidos", usuario);
+        }
+        return new Respuesta<>(false, mensaje.toString(), usuario);
+    }
 
 
 }
