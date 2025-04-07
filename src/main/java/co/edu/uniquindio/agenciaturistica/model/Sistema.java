@@ -112,7 +112,7 @@ public class Sistema {
      * Este metodo permite generar un código aleatorio de 6 dígitos
      * @return String Código generado
      */
-    private String generarCodigo() {
+    public String generarCodigo() {
         int code = 100000 + random.nextInt(900000);
         return String.valueOf(code);
     }
@@ -139,9 +139,40 @@ public class Sistema {
         return usuarioDAO.registrarUsuario(usuario);
     }
 
+    /**
+     * Este método permite actualizar un usuario del sistema.
+     * @param usuario Usuario a actualizar
+     * @return Respuesta<Usuario> Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
     public Respuesta<Usuario> actualizarUsuario(Usuario usuario) throws SQLException {
         Respuesta<Usuario> respuestaDatos = validarDatosUsuario(usuario);
-        return  null;
+        if(!respuestaDatos.isExito()){
+            return respuestaDatos;
+        }
+
+        //Válida que el usuario no cambio su email
+        if(usuarioDAO.existeEmail(usuario.getEmail())){
+            return usuarioDAO.actualizarUsuario(usuario);
+        }
+
+        //En caso de que el usuario haya cambiado su email
+        String codigoVerificacion = generarCodigo();
+        return usuarioDAO.actualizarUsuario(usuario,codigoVerificacion);
+    }
+
+    public Respuesta<Usuario> eliminarUsuario(String identificacion) throws SQLException {
+
+        //Válido que la identificación no esté vacía o sea nula
+        if(identificacion==null || identificacion.isEmpty()){
+            return new Respuesta<>(false, "La identificación no puede estar vacía", null);
+        }
+        //Válido que la identificación pertenezca a un usuario registrado
+        if(!usuarioDAO.existeIdentifiacion(identificacion)){
+            return new Respuesta<>(false, "El usuario no existe", null);
+        }
+
+        return usuarioDAO.eliminarUsuario(identificacion);
     }
 
     //----------METODOS DE VALIDACION-------------------

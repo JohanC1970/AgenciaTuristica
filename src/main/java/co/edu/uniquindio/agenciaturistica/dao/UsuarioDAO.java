@@ -8,11 +8,12 @@ import co.edu.uniquindio.agenciaturistica.util.Respuesta;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 public class UsuarioDAO {
 
     private Connection connection;
-
+    private Random random = new Random();
     public UsuarioDAO() throws SQLException {
         try {
             this.connection = DataBaseConnection.getConnection();
@@ -256,7 +257,7 @@ public class UsuarioDAO {
      * @return true si la identificación existe, false en caso contrario
      * @throws SQLException
      */
-    private boolean existeIdentifiacion(String identificacion) throws SQLException {
+    public boolean existeIdentifiacion(String identificacion) throws SQLException {
         String query = "SELECT 1 FROM usuario WHERE identicacion = ? LIMIT 1";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -267,5 +268,80 @@ public class UsuarioDAO {
         }
     }
 
+    /**
+     * Este método permite actualizar un usuario en la base de datos.
+     * Los unicos datos que no se cambian son la identificacion, email, password y fecha contratacion.
+     * @param usuario Usuario a actualizar
+     * @return Respuesta<Usuario> Respuesta con el resultado de la operación
+     */
+    public Respuesta<Usuario> actualizarUsuario(Usuario usuario) {
+        String sql = "UPDATE usuario SET nombre = ?, apellido = ?, cuenta_verificada = ? WHERE email = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getApellido());
+            ps.setBoolean(3, usuario.isCuentaVerificada());
+            ps.setString(4, usuario.getEmail());
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                return new Respuesta<>(true, "Usuario actualizado correctamente", usuario);
+            } else {
+                return new Respuesta<>(false, "No se encontró el usuario para actualizar", null);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Respuesta<>(false, "Error al actualizar el usuario: " + e.getMessage(), null);
+        }
+    }
+
+    /**
+     * Este método permite actualizar un usuario en la base de datos.
+     * Ya que el usuario ha cambiado su email, se requiere verificar el nuevo correo.
+     * @param usuario Usuario a actualizar
+     * @param codigoVerificacion Código de verificación del nuevo correo
+     * @return
+     */
+    public Respuesta<Usuario> actualizarUsuario(Usuario usuario, String codigoVerificacion) {
+        // Primero actualizamos los datos básicos como nombre y apellido
+        String sql = "UPDATE usuario SET nombre = ?, apellido = ?, email = ? WHERE identificacion = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getApellido());
+            ps.setString(3, usuario.getEmail());
+            ps.setString(4, usuario.getIdentificacion());
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                // Luego actualizamos el código de verificación y estado
+
+                if (actualizarCodigoVerificacion(usuario.getEmail(), codigoVerificacion).isExito()) {
+                    usuario.setCodigoVerificacion(codigoVerificacion);
+                    usuario.setCuentaVerificada(false);
+
+                    return new Respuesta<>(true, "Usuario actualizado y se requiere verificar el nuevo correo", usuario);
+                } else {
+                    return new Respuesta<>(false, "Se actualizó el usuario pero no se pudo generar el código de verificación", null);
+                }
+
+            } else {
+                return new Respuesta<>(false, "No se encontró el usuario a actualizar", null);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Respuesta<>(false, "Error al actualizar el usuario: " + e.getMessage(), null);
+        }
+    }
+
+
+    public Respuesta<Usuario> eliminarUsuario(String identificacion){
+
+        return null;
+    }
 
 }
