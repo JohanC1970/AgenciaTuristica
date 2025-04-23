@@ -1,5 +1,6 @@
 package co.edu.uniquindio.agenciaturistica.dao;
 
+import co.edu.uniquindio.agenciaturistica.model.Empleado;
 import co.edu.uniquindio.agenciaturistica.model.Enums.Rol;
 import co.edu.uniquindio.agenciaturistica.model.Usuario;
 import co.edu.uniquindio.agenciaturistica.util.DataBaseConnection;
@@ -7,7 +8,10 @@ import co.edu.uniquindio.agenciaturistica.util.PasswordEncoder;
 import co.edu.uniquindio.agenciaturistica.util.Respuesta;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class UsuarioDAO {
@@ -269,31 +273,113 @@ public class UsuarioDAO {
     }
 
     /**
-     * Este método permite actualizar un usuario en la base de datos.
-     * Los unicos datos que no se cambian son la identificacion, email, password y fecha contratacion.
-     * @param usuario Usuario a actualizar
+     * Este método permite actualizar los datos de un usuario
+     * @param usuario Usuario con los datos actualizados
      * @return Respuesta<Usuario> Respuesta con el resultado de la operación
      */
-    public Respuesta<Usuario> actualizarUsuario(Usuario usuario) {
-        String sql = "UPDATE usuario SET nombre = ?, apellido = ?, cuenta_verificada = ? WHERE email = ?";
+    public Respuesta<Usuario> actualizarUsuario(Usuario usuario) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, usuario.getNombre());
-            ps.setString(2, usuario.getApellido());
-            ps.setBoolean(3, usuario.isCuentaVerificada());
-            ps.setString(4, usuario.getEmail());
+        try {
+            // Verificamos si el usuario existe
+            String verificarUsuarioQuery = "SELECT * FROM usuario WHERE identificacion = ?";
+            preparedStatement = connection.prepareStatement(verificarUsuarioQuery);
+            preparedStatement.setString(1, usuario.getIdentificacion());
+            resultSet = preparedStatement.executeQuery();
 
-            int rows = ps.executeUpdate();
-
-            if (rows > 0) {
-                return new Respuesta<>(true, "Usuario actualizado correctamente", usuario);
-            } else {
-                return new Respuesta<>(false, "No se encontró el usuario para actualizar", null);
+            if (!resultSet.next()) {
+                return new Respuesta<>(false, "El usuario no existe en el sistema", null);
             }
 
+            // Si el email ha cambiado, verificamos que no exista otro usuario con ese email
+            String emailActual = resultSet.getString("email");
+            if (!emailActual.equals(usuario.getEmail())) {
+                if (existeEmail(usuario.getEmail())) {
+                    return new Respuesta<>(false, "Ya existe otro usuario con el email proporcionado", null);
+                }
+            }
+
+            // Actualizamos los datos del usuario
+            String actualizarUsuarioQuery = "UPDATE usuario SET nombre = ?, apellido = ?, email = ?, rol = ? WHERE identificacion = ?";
+            preparedStatement = connection.prepareStatement(actualizarUsuarioQuery);
+            preparedStatement.setString(1, usuario.getNombre());
+            preparedStatement.setString(2, usuario.getApellido());
+            preparedStatement.setString(3, usuario.getEmail());
+            preparedStatement.setString(4, usuario.getRol().toString());
+            preparedStatement.setString(5, usuario.getIdentificacion());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                // Si el usuario es un empleado o administrador, actualizamos sus datos específicos
+                if (usuario.getRol() == Rol.EMPLEADO || usuario.getRol() == Rol.ADMINISTRADOR) {
+                    // Obtenemos el ID del usuario
+                    String obtenerIdQuery = "SELECT id FROM usuario WHERE identificacion = ?";
+                    preparedStatement = connection.prepareStatement(obtenerIdQuery);
+                    preparedStatement.setString(1, usuario.getIdentificacion());
+                    resultSet = preparedStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        int usuarioId = resultSet.getInt("id");
+
+                        if (usuario.getRol() == Rol.EMPLEADO) {
+                            // Verificamos si ya existe como empleado
+                            String verificarEmpleadoQuery = "SELECT * FROM empleado WHERE id = ?";
+                            preparedStatement = connection.prepareStatement(verificarEmpleadoQuery);
+                            preparedStatement.setInt(1, usuarioId);
+                            resultSet = preparedStatement.executeQuery();
+
+                            if (resultSet.next()) {
+                                // Actualizamos el empleado
+                                String actualizarEmpleadoQuery = "UPDATE empleado SET fecha_contratacion = ? WHERE id = ?";
+                                preparedStatement = connection.prepareStatement(actualizarEmpleadoQuery);
+                                preparedStatement.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+                                preparedStatement.setInt(2, usuarioId);
+                                preparedStatement.executeUpdate();
+                            } else {
+                                // Insertamos el empleado
+                                String insertarEmpleadoQuery = "INSERT INTO empleado (id, fecha_contratacion) VALUES (?, ?)";
+                                preparedStatement = connection.prepareStatement(insertarEmpleadoQuery);
+                                preparedStatement.setInt(1, usuarioId);
+                                preparedStatement.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+                                preparedStatement.executeUpdate();
+                            }
+                        } else if (usuario.getRol() == Rol.ADMINISTRADOR) {
+                            // Verificamos si ya existe como administrador
+                            String verificarAdminQuery = "SELECT * FROM administrador WHERE id = ?";
+                            preparedStatement = connection.prepareStatement(verificarAdminQuery);
+                            preparedStatement.setInt(1, usuarioId);
+                            resultSet = preparedStatement.executeQuery();
+
+                            if (resultSet.next()) {
+                                // Actualizamos el administrador
+                                String actualizarAdminQuery = "UPDATE administrador SET fecha_contratacion = ? WHERE id = ?";
+                                preparedStatement = connection.prepareStatement(actualizarAdminQuery);
+                                preparedStatement.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+                                preparedStatement.setInt(2, usuarioId);
+                                preparedStatement.executeUpdate();
+                            } else {
+                                // Insertamos el administrador
+                                String insertarAdminQuery = "INSERT INTO administrador (id, fecha_contratacion) VALUES (?, ?)";
+                                preparedStatement = connection.prepareStatement(insertarAdminQuery);
+                                preparedStatement.setInt(1, usuarioId);
+                                preparedStatement.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+                                preparedStatement.executeUpdate();
+                            }
+                        }
+                    }
+                }
+
+                return new Respuesta<>(true, "Usuario actualizado correctamente", usuario);
+            } else {
+                return new Respuesta<>(false, "No se pudo actualizar el usuario", null);
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
             return new Respuesta<>(false, "Error al actualizar el usuario: " + e.getMessage(), null);
+        } finally {
+            if (resultSet != null) resultSet.close();
+            if (preparedStatement != null) preparedStatement.close();
         }
     }
 
@@ -339,9 +425,296 @@ public class UsuarioDAO {
     }
 
 
-    public Respuesta<Usuario> eliminarUsuario(String identificacion){
+    /**
+     * Este método permite eliminar un usuario del sistema por su identificación
+     * @param identificacion Identificación del usuario a eliminar
+     * @return Respuesta<Usuario> Respuesta con el resultado de la operación
+     */
+    public Respuesta<Usuario> eliminarUsuario(String identificacion) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Usuario usuario = null;
 
-        return null;
+        try {
+            // Primero obtenemos el usuario para retornarlo en la respuesta
+            String selectQuery = "SELECT * FROM usuario WHERE identificacion = ?";
+            preparedStatement = connection.prepareStatement(selectQuery);
+            preparedStatement.setString(1, identificacion);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                usuario = new Usuario();
+                usuario.setNombre(resultSet.getString("nombre"));
+                usuario.setApellido(resultSet.getString("apellido"));
+                usuario.setIdentificacion(resultSet.getString("identificacion"));
+                usuario.setEmail(resultSet.getString("email"));
+                usuario.setRol(Rol.valueOf(resultSet.getString("rol")));
+                if (resultSet.getDate("fecha_registro") != null) {
+                    usuario.setFechaRegistro(resultSet.getDate("fecha_registro").toLocalDate());
+                }
+            } else {
+                return new Respuesta<>(false, "No se encontró el usuario con la identificación proporcionada", null);
+            }
+
+            // Verificar si el usuario tiene reservas asociadas antes de eliminarlo
+            String checkReservasQuery = "SELECT COUNT(*) FROM reserva WHERE cliente_id = (SELECT id FROM cliente WHERE identificacion = ?)";
+            preparedStatement = connection.prepareStatement(checkReservasQuery);
+            preparedStatement.setString(1, identificacion);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                return new Respuesta<>(false, "No se puede eliminar el usuario porque tiene reservas asociadas", null);
+            }
+
+            // Si es un empleado, verificar si tiene reservas asociadas como empleado
+            if (usuario.getRol() == Rol.EMPLEADO) {
+                String checkReservasEmpleadoQuery = "SELECT COUNT(*) FROM reserva WHERE empleado_id = (SELECT id FROM empleado WHERE id = (SELECT id FROM usuario WHERE identificacion = ?))";
+                preparedStatement = connection.prepareStatement(checkReservasEmpleadoQuery);
+                preparedStatement.setString(1, identificacion);
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    return new Respuesta<>(false, "No se puede eliminar el empleado porque tiene reservas asociadas", null);
+                }
+            }
+
+            // Eliminar registros relacionados según el rol
+            if (usuario.getRol() == Rol.EMPLEADO) {
+                String deleteEmpleadoQuery = "DELETE FROM empleado WHERE id = (SELECT id FROM usuario WHERE identificacion = ?)";
+                preparedStatement = connection.prepareStatement(deleteEmpleadoQuery);
+                preparedStatement.setString(1, identificacion);
+                preparedStatement.executeUpdate();
+            } else if (usuario.getRol() == Rol.ADMINISTRADOR) {
+                String deleteAdminQuery = "DELETE FROM administrador WHERE id = (SELECT id FROM usuario WHERE identificacion = ?)";
+                preparedStatement = connection.prepareStatement(deleteAdminQuery);
+                preparedStatement.setString(1, identificacion);
+                preparedStatement.executeUpdate();
+            }
+
+            // Finalmente, eliminar el usuario
+            String deleteUsuarioQuery = "DELETE FROM usuario WHERE identificacion = ?";
+            preparedStatement = connection.prepareStatement(deleteUsuarioQuery);
+            preparedStatement.setString(1, identificacion);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                return new Respuesta<>(true, "Usuario eliminado exitosamente", usuario);
+            } else {
+                return new Respuesta<>(false, "No se pudo eliminar el usuario", null);
+            }
+        } catch (SQLException e) {
+            return new Respuesta<>(false, "Error al eliminar el usuario: " + e.getMessage(), null);
+        } finally {
+            if (resultSet != null) resultSet.close();
+            if (preparedStatement != null) preparedStatement.close();
+        }
     }
+
+    /**
+     * Este método permite actualizar la contraseña de un usuario
+     * @param email Email del usuario
+     * @param nuevaPassword Nueva contraseña
+     * @return Respuesta<String> Respuesta con el resultado de la operación
+     */
+    public Respuesta<String> actualizarPassword(String email, String nuevaPassword) {
+        PreparedStatement preparedStatement = null;
+        try {
+            if (!existeEmail(email)) {
+                return new Respuesta<>(false, "El email no está registrado en nuestro sistema", null);
+            }
+
+            String query = "UPDATE usuario SET password = ?, codigo_recuperacion_password = NULL, expiracion_codigo_recuperacion_password = NULL WHERE email = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, PasswordEncoder.hashPassword(nuevaPassword));
+            preparedStatement.setString(2, email);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                return new Respuesta<>(true, "Contraseña actualizada correctamente", null);
+            } else {
+                return new Respuesta<>(false, "No se pudo actualizar la contraseña", null);
+            }
+        } catch (SQLException e) {
+            return new Respuesta<>(false, "Error al actualizar la contraseña: " + e.getMessage(), null);
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                // Manejo de la excepción al cerrar el PreparedStatement
+                return new Respuesta<>(false, "Error al cerrar la conexión: " + e.getMessage(), null);
+            }
+        }
+    }
+
+    /**
+     * Este método permite verificar la cuenta de un usuario utilizando el código enviado por correo
+     * @param email Email del usuario
+     * @param codigo Código de verificación
+     * @return Respuesta<Usuario> Respuesta con el resultado de la operación
+     */
+    public Respuesta<Usuario> verificarCuenta(String email, String codigo) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Primero verificamos si el email existe
+            if (!existeEmail(email)) {
+                return new Respuesta<>(false, "El email no está registrado en nuestro sistema", null);
+            }
+
+            // Verificamos si el código es válido y no ha expirado
+            String verificarCodigoQuery = "SELECT * FROM usuario WHERE email = ? AND codigo_verificacion = ? AND expiracion_codigo_verificacion > NOW()";
+            preparedStatement = connection.prepareStatement(verificarCodigoQuery);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, codigo);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                // El código es válido, actualizamos la cuenta como verificada
+                String actualizarCuentaQuery = "UPDATE usuario SET cuenta_verificada = true, codigo_verificacion = NULL, expiracion_codigo_verificacion = NULL WHERE email = ?";
+                preparedStatement = connection.prepareStatement(actualizarCuentaQuery);
+                preparedStatement.setString(1, email);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    // Obtenemos los datos del usuario para devolverlos en la respuesta
+                    String obtenerUsuarioQuery = "SELECT * FROM usuario WHERE email = ?";
+                    preparedStatement = connection.prepareStatement(obtenerUsuarioQuery);
+                    preparedStatement.setString(1, email);
+                    resultSet = preparedStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        Usuario usuario = new Usuario();
+                        usuario.setNombre(resultSet.getString("nombre"));
+                        usuario.setApellido(resultSet.getString("apellido"));
+                        usuario.setIdentificacion(resultSet.getString("identificacion"));
+                        usuario.setEmail(resultSet.getString("email"));
+                        usuario.setRol(Rol.valueOf(resultSet.getString("rol")));
+                        usuario.setCuentaVerificada(true);
+                        if (resultSet.getDate("fecha_registro") != null) {
+                            usuario.setFechaRegistro(resultSet.getDate("fecha_registro").toLocalDate());
+                        }
+
+                        return new Respuesta<>(true, "Cuenta verificada correctamente", usuario);
+                    }
+                }
+                return new Respuesta<>(false, "No se pudo verificar la cuenta", null);
+            } else {
+                // Verificamos si el código ha expirado
+                String verificarExpiracionQuery = "SELECT * FROM usuario WHERE email = ? AND codigo_verificacion = ? AND expiracion_codigo_verificacion <= NOW()";
+                preparedStatement = connection.prepareStatement(verificarExpiracionQuery);
+                preparedStatement.setString(1, email);
+                preparedStatement.setString(2, codigo);
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    return new Respuesta<>(false, "El código de verificación ha expirado. Solicite uno nuevo.", null);
+                } else {
+                    return new Respuesta<>(false, "El código de verificación es incorrecto", null);
+                }
+            }
+        } catch (SQLException e) {
+            return new Respuesta<>(false, "Error al verificar la cuenta: " + e.getMessage(), null);
+        } finally {
+            if (resultSet != null) resultSet.close();
+            if (preparedStatement != null) preparedStatement.close();
+        }
+    }
+
+    /**
+     * Este método permite obtener todos los usuarios con un rol específico
+     * @param rol Rol de los usuarios a buscar
+     * @return Lista de usuarios con el rol especificado
+     * @throws SQLException
+     */
+    public List<Usuario> obtenerUsuariosPorRol(Rol rol) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Usuario> listaUsuarios = new ArrayList<>();
+
+        try {
+            // Query base para obtener usuarios por rol
+            String query = "SELECT u.*, ";
+
+            // Si el rol es EMPLEADO o ADMINISTRADOR, obtenemos también la fecha de contratación
+            if (rol == Rol.EMPLEADO) {
+                query += "e.fecha_contratacion ";
+                query += "FROM usuario u LEFT JOIN empleado e ON u.id = e.id ";
+            } else if (rol == Rol.ADMINISTRADOR) {
+                query += "a.fecha_contratacion ";
+                query += "FROM usuario u LEFT JOIN administrador a ON u.id = a.id ";
+            } else {
+                query += "NULL as fecha_contratacion ";
+                query += "FROM usuario u ";
+            }
+
+            query += "WHERE u.rol = ? ORDER BY u.nombre, u.apellido";
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, rol.toString());
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                // Creamos el usuario base
+                Usuario usuario = crearUsuarioDesdeResultSet(resultSet);
+
+                // Si es un empleado o administrador, convertimos a la subclase correspondiente
+                if (rol == Rol.EMPLEADO) {
+                    Empleado empleado = new Empleado();
+                    // Copiamos todos los atributos del usuario
+                    empleado.setNombre(usuario.getNombre());
+                    empleado.setApellido(usuario.getApellido());
+                    empleado.setIdentificacion(usuario.getIdentificacion());
+                    empleado.setEmail(usuario.getEmail());
+                    empleado.setPassword(usuario.getPassword());
+                    empleado.setRol(usuario.getRol());
+                    empleado.setCuentaVerificada(usuario.isCuentaVerificada());
+                    empleado.setFechaRegistro(usuario.getFechaRegistro());
+
+                    // Agregamos los atributos específicos del empleado
+                    if (resultSet.getDate("fecha_contratacion") != null) {
+                        empleado.setFechaContratacion(resultSet.getDate("fecha_contratacion").toLocalDate());
+                    }
+
+                    listaUsuarios.add(empleado);
+                } else {
+                    listaUsuarios.add(usuario);
+                }
+            }
+
+            return listaUsuarios;
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener usuarios por rol: " + e.getMessage(), e);
+        } finally {
+            if (resultSet != null) resultSet.close();
+            if (preparedStatement != null) preparedStatement.close();
+        }
+    }
+
+    /**
+     * Método utilitario para crear un objeto Usuario a partir de un ResultSet
+     * @param resultSet
+     * @return
+     * @throws SQLException
+     */
+    private Usuario crearUsuarioDesdeResultSet(ResultSet resultSet) throws SQLException {
+        Usuario usuario = new Usuario();
+        usuario.setNombre(resultSet.getString("nombre"));
+        usuario.setApellido(resultSet.getString("apellido"));
+        usuario.setIdentificacion(resultSet.getString("identificacion"));
+        usuario.setEmail(resultSet.getString("email"));
+        usuario.setPassword(resultSet.getString("password"));
+        usuario.setRol(Rol.valueOf(resultSet.getString("rol")));
+        usuario.setCuentaVerificada(resultSet.getBoolean("cuenta_verificada"));
+
+        if (resultSet.getDate("fecha_registro") != null) {
+            usuario.setFechaRegistro(resultSet.getDate("fecha_registro").toLocalDate());
+        }
+
+        return usuario;
+    }
+
 
 }

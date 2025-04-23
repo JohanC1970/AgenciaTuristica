@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.VerificarCuentaController">
+   <children>
+      <VBox alignment="CENTER" layoutX="100.0" layoutY="14.0" prefHeight="400.0" prefWidth="500.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="CENTER" prefHeight="87.0" prefWidth="460.0">
+               <children>
+                  <Label text="Verificación de Cuenta" textFill="#2c3e50">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label fx:id="lblInstrucciones" text="Ingresa tu correo electrónico y el código de verificación que recibiste" textAlignment="CENTER" textFill="#7f8c8d" wrapText="true">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+
+            <VBox fx:id="formularioContainer" spacing="10.0">
+               <children>
+                  <Label text="Correo Electrónico" textFill="#34495e">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtEmail" prefHeight="40.0" promptText="ejemplo@correo.com" style="-fx-background-radius: 5;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Label text="Código de Verificación" textFill="#34495e">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtCodigo" prefHeight="40.0" promptText="Ingresa el código recibido" style="-fx-background-radius: 5;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="btnVerificar" defaultButton="true" mnemonicParsing="false" onAction="#verificarCuenta" prefHeight="40.0" prefWidth="460.0" style="-fx-background-color: #3498db; -fx-background-radius: 5;" text="Verificar Cuenta" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <HBox alignment="CENTER" prefHeight="30.0" prefWidth="460.0">
+                     <children>
+                        <Label text="¿No recibiste el código?" textFill="#7f8c8d">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="btnReenviarCodigo" mnemonicParsing="false" onAction="#reenviarCodigo" style="-fx-background-color: transparent;" text="Reenviar código" textFill="#3498db">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <VBox fx:id="verificacionExitosaContainer" alignment="CENTER" prefHeight="150.0" prefWidth="460.0" spacing="15.0" visible="false">
+               <children>
+                  <Label text="¡Verificación Exitosa!" textFill="#2ecc71">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label text="Tu cuenta ha sido verificada correctamente" textFill="#7f8c8d">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="btnIrLogin" defaultButton="true" mnemonicParsing="false" onAction="#irAlLogin" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2ecc71; -fx-background-radius: 5;" text="Ir al Login" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </VBox>
+
+            <Label fx:id="lblError" alignment="CENTER" prefHeight="18.0" prefWidth="460.0" textFill="#e74c3c" visible="false">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+
+            <Button fx:id="btnCancelar" cancelButton="true" mnemonicParsing="false" onAction="#cancelar" style="-fx-background-color: transparent; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" text="Volver" textFill="#7f8c8d">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

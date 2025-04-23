@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.GestionActividadesController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #9b59b6;" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Gestión de Actividades Turísticas" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volver" style="-fx-background-color: #7f8c8d;" text="Volver" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0">
+                    <children>
+                        <Label text="Buscar:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtBuscar" prefHeight="30.0" prefWidth="250.0" promptText="Nombre, descripción o ubicación">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </TextField>
+                        <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarActividad" prefHeight="30.0" style="-fx-background-color: #3498db;" text="Buscar" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#mostrarFormularioAgregar" prefHeight="30.0" style="-fx-background-color: #2ecc71;" text="Agregar Actividad" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </HBox>
+                <TableView fx:id="tablaActividades" prefHeight="400.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />
+                        <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio" />
+                        <TableColumn fx:id="colDuracion" prefWidth="80.0" text="Duración (h)" />
+                        <TableColumn fx:id="colUbicacion" prefWidth="120.0" text="Ubicación" />
+                        <TableColumn fx:id="colFechaInicio" prefWidth="120.0" text="Fecha y Hora" />
+                        <TableColumn fx:id="colCupos" prefWidth="80.0" text="Cupos Disp." />
+                        <TableColumn fx:id="colAcciones" prefWidth="120.0" text="Acciones" />
+                    </columns>
+                </TableView>
+                <HBox alignment="CENTER_RIGHT" prefHeight="50.0" spacing="10.0">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                    <children>
+                        <Label fx:id="lblTotalActividades" text="Total de actividades: 0">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <right>
+        <VBox fx:id="panelFormulario" prefHeight="540.0" prefWidth="300.0" style="-fx-background-color: #f5f6fa; -fx-border-color: #dcdde1; -fx-border-width: 0 0 0 1;" BorderPane.alignment="CENTER">
+            <children>
+                <Label alignment="CENTER" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: #9b59b6;" text="Formulario de Actividad" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <ScrollPane fitToWidth="true" prefHeight="490.0" prefWidth="300.0" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+                    <content>
+                        <VBox spacing="15.0">
+                            <children>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Nombre:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtNombre" promptText="Ingrese el nombre">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Descripción:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextArea fx:id="txtDescripcion" prefHeight="80.0" promptText="Ingrese la descripción" wrapText="true">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextArea>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Ubicación:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtUbicacion" promptText="Ej: Playa del Carmen">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Precio:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtPrecio" promptText="Ej: 150000">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Duración (horas):">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtDuracion" promptText="Ej: 3">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Fecha y Hora de Inicio:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <HBox spacing="5.0">
+                                            <children>
+                                                <DatePicker fx:id="dateFecha" prefHeight="30.0" prefWidth="180.0" promptText="Fecha" />
+                                                <ComboBox fx:id="comboHora" prefHeight="30.0" prefWidth="85.0" promptText="Hora" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Cupo Máximo:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtCupoMaximo" promptText="Ej: 20">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Cupos Disponibles:">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtCuposDisponibles" promptText="Ej: 20">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <Label fx:id="lblError" alignment="CENTER" prefHeight="30.0" prefWidth="270.0" textFill="#e74c3c" wrapText="true">
+                                    <font>
+                                        <Font size="12.0" />
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER" spacing="10.0">
+                                    <children>
+                                        <Button fx:id="btnGuardar" defaultButton="true" mnemonicParsing="false" onAction="#guardarActividad" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #2ecc71;" text="Guardar" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
+                                        <Button fx:id="btnCancelar" cancelButton="true" mnemonicParsing="false" onAction="#cancelarFormulario" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #e74c3c;" text="Cancelar" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </right>
+</BorderPane>

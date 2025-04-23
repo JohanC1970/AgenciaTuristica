@@ -1,12 +1,14 @@
 package co.edu.uniquindio.agenciaturistica.model;
 
-import co.edu.uniquindio.agenciaturistica.dao.UsuarioDAO;
+import co.edu.uniquindio.agenciaturistica.dao.*;
+import co.edu.uniquindio.agenciaturistica.model.Enums.Rol;
 import co.edu.uniquindio.agenciaturistica.util.EmailSender;
 import co.edu.uniquindio.agenciaturistica.util.Respuesta;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
@@ -14,11 +16,26 @@ public class Sistema {
 
     private String nombre;
     private UsuarioDAO usuarioDAO;
+    private ClienteDAO clienteDAO;
+    private PaqueteDAO paqueteDAO;
+    private ActividadDAO actividadDAO;
+    private HospedajeDAO hospedajeDAO;
+    private HabitacionDAO habitacionDAO;
+    private ReporteDAO reporteDAO;
+    private ReservaDAO reservaDAO;
+
     private Random random = new Random();
 
     public Sistema(String nombre) throws SQLException {
         this.nombre = nombre;
         usuarioDAO = new UsuarioDAO();
+        clienteDAO = new ClienteDAO();
+        paqueteDAO = new PaqueteDAO();
+        actividadDAO = new ActividadDAO();
+        hospedajeDAO = new HospedajeDAO();
+        habitacionDAO = new HabitacionDAO();
+        reporteDAO = new ReporteDAO();
+        reservaDAO = new ReservaDAO();
     }
 
     public String getNombre() {
@@ -175,6 +192,42 @@ public class Sistema {
         return usuarioDAO.eliminarUsuario(identificacion);
     }
 
+    /**
+     * Método para verificar si un email existe en el sistema
+     * @param email Email a verificar
+     * @return true si el email existe, false en caso contrario
+     */
+    public boolean verificarExistenciaEmail(String email) {
+        try {
+            return usuarioDAO.existeEmail(email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Método para actualizar la contraseña de un usuario
+     * @param email Email del usuario
+     * @param nuevaPassword Nueva contraseña
+     * @return Respuesta con el resultado de la operación
+     */
+    public Respuesta<String> actualizarPassword(String email, String nuevaPassword) {
+        try {
+            if (nuevaPassword == null || nuevaPassword.isEmpty()) {
+                return new Respuesta<>(false, "La contraseña no puede estar vacía", null);
+            }
+
+            if (nuevaPassword.length() < 6) {
+                return new Respuesta<>(false, "La contraseña debe tener al menos 6 caracteres", null);
+            }
+
+            return usuarioDAO.actualizarPassword(email, nuevaPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Respuesta<>(false, "Error al actualizar la contraseña: " + e.getMessage(), null);
+        }
+    }
     //----------METODOS DE VALIDACION-------------------
 
     /**
@@ -209,5 +262,617 @@ public class Sistema {
         return new Respuesta<>(false, mensaje.toString(), usuario);
     }
 
+    /**
+     * Este método permite obtener la lista de todos los empleados registrados en el sistema
+     * @return Lista de usuarios con rol de empleado
+     * @throws SQLException
+     */
+    public List<Usuario> obtenerEmpleados() throws SQLException {
+        try {
+            return usuarioDAO.obtenerUsuariosPorRol(Rol.EMPLEADO);
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener la lista de empleados", e);
+        }
+    }
+
+    /**
+     * Este método permite verificar la cuenta de un usuario utilizando el código enviado por correo
+     * @param email Email del usuario
+     * @param codigo Código de verificación
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Usuario> verificarCuenta(String email, String codigo) throws SQLException {
+        try {
+            // Validar que los datos no sean null o vacíos
+            if (email == null || email.isEmpty() || codigo == null || codigo.isEmpty()) {
+                return new Respuesta<>(false, "El email y el código son obligatorios", null);
+            }
+
+            // Validar formato de email
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+                return new Respuesta<>(false, "El formato del email no es válido", null);
+            }
+
+            // Llamar al método del DAO para verificar la cuenta
+            return usuarioDAO.verificarCuenta(email, codigo);
+        } catch (SQLException e) {
+            throw new SQLException("Error al verificar la cuenta: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Este método permite obtener la lista de todos los clientes registrados en el sistema
+     * @return Lista de clientes
+     * @throws SQLException
+     */
+    public List<Cliente> obtenerClientes() throws SQLException {
+        try {
+            return clienteDAO.obtenerTodosLosClientes();
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener la lista de clientes", e);
+        }
+    }
+
+    /**
+     * Este método permite registrar un nuevo cliente en el sistema
+     * @param cliente Cliente a registrar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Cliente> registrarCliente(Cliente cliente) throws SQLException {
+        try {
+            // Validar datos del cliente
+            Respuesta<Cliente> respuestaDatos = validarDatosCliente(cliente);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return clienteDAO.guardarCliente(cliente);
+        } catch (SQLException e) {
+            throw new SQLException("Error al registrar el cliente", e);
+        }
+    }
+
+    /**
+     * Este método permite actualizar los datos de un cliente
+     * @param cliente Cliente con los datos actualizados
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Cliente> actualizarCliente(Cliente cliente) throws SQLException {
+        try {
+            // Validar datos del cliente
+            Respuesta<Cliente> respuestaDatos = validarDatosCliente(cliente);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return clienteDAO.actualizarCliente(cliente);
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar el cliente", e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar un cliente del sistema
+     * @param identificacion Identificación del cliente a eliminar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Cliente> eliminarCliente(String identificacion) throws SQLException {
+        try {
+            return clienteDAO.eliminarCliente(identificacion);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar el cliente", e);
+        }
+    }
+
+    /**
+     * Este método permite buscar un cliente por su identificación
+     * @param identificacion Identificación del cliente a buscar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Cliente> buscarClientePorIdentificacion(String identificacion) throws SQLException {
+        try {
+            return clienteDAO.buscarClientePorIdentificacion(identificacion);
+        } catch (SQLException e) {
+            throw new SQLException("Error al buscar el cliente", e);
+        }
+    }
+
+    /**
+     * Este método permite validar los datos de un cliente
+     * @param cliente Cliente a validar
+     * @return Respuesta con el resultado de la validación
+     */
+    private Respuesta<Cliente> validarDatosCliente(Cliente cliente) {
+        StringBuilder mensaje = new StringBuilder();
+
+        if (cliente.getIdentificacion() == null || cliente.getIdentificacion().isEmpty()) {
+            mensaje.append("La identificación es obligatoria\n");
+        }
+
+        if (cliente.getNombre() == null || cliente.getNombre().isEmpty()) {
+            mensaje.append("El nombre es obligatorio\n");
+        }
+
+        if (cliente.getApellido() == null || cliente.getApellido().isEmpty()) {
+            mensaje.append("El apellido es obligatorio\n");
+        }
+
+        if (cliente.getCorreo() == null || cliente.getCorreo().isEmpty()) {
+            mensaje.append("El correo electrónico es obligatorio\n");
+        } else if (!cliente.getCorreo().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            mensaje.append("El formato del correo electrónico no es válido\n");
+        }
+
+        if (cliente.getTelefono() == null || cliente.getTelefono().isEmpty()) {
+            mensaje.append("El teléfono es obligatorio\n");
+        }
+
+        if (cliente.getFechaNacimiento() == null) {
+            mensaje.append("La fecha de nacimiento es obligatoria\n");
+        } else if (cliente.getFechaNacimiento().isAfter(LocalDate.now())) {
+            mensaje.append("La fecha de nacimiento no puede ser en el futuro\n");
+        }
+
+        if (mensaje.length() == 0) {
+            return new Respuesta<>(true, "Los datos son válidos", cliente);
+        }
+
+        return new Respuesta<>(false, mensaje.toString(), null);
+    }
+
+    /**
+     * Este método permite obtener todos los paquetes turísticos disponibles
+     * @return Lista de paquetes turísticos
+     * @throws SQLException
+     */
+    public List<PaqueteTuristico> obtenerPaquetesTuristicos() throws SQLException {
+        try {
+            return paqueteDAO.obtenerTodosLosPaquetes();
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener los paquetes turísticos", e);
+        }
+    }
+
+    /**
+     * Este método permite crear un nuevo paquete turístico
+     * @param paquete Paquete turístico a crear
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<PaqueteTuristico> crearPaqueteTuristico(PaqueteTuristico paquete) throws SQLException {
+        try {
+            // Validar datos del paquete
+            Respuesta<PaqueteTuristico> respuestaDatos = validarDatosPaquete(paquete);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return paqueteDAO.guardarPaquete(paquete);
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear el paquete turístico", e);
+        }
+    }
+
+    /**
+     * Este método permite actualizar un paquete turístico existente
+     * @param paquete Paquete turístico con los datos actualizados
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<PaqueteTuristico> actualizarPaqueteTuristico(PaqueteTuristico paquete) throws SQLException {
+        try {
+            // Validar datos del paquete
+            Respuesta<PaqueteTuristico> respuestaDatos = validarDatosPaquete(paquete);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return paqueteDAO.actualizarPaquete(paquete);
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar el paquete turístico", e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar un paquete turístico
+     * @param id ID del paquete a eliminar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<PaqueteTuristico> eliminarPaqueteTuristico(int id) throws SQLException {
+        try {
+            return paqueteDAO.eliminarPaquete(id);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar el paquete turístico", e);
+        }
+    }
+
+    /**
+     * Este método permite buscar un paquete turístico por su ID
+     * @param id ID del paquete a buscar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<PaqueteTuristico> buscarPaqueteTuristicoPorId(int id) throws SQLException {
+        try {
+            return paqueteDAO.buscarPaquetePorId(id);
+        } catch (SQLException e) {
+            throw new SQLException("Error al buscar el paquete turístico", e);
+        }
+    }
+
+    /**
+     * Este método permite agregar una actividad a un paquete turístico
+     * @param paqueteId ID del paquete
+     * @param actividadId ID de la actividad
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Boolean> agregarActividadAPaquete(int paqueteId, int actividadId) throws SQLException {
+        try {
+            return paqueteDAO.agregarActividadAPaquete(paqueteId, actividadId);
+        } catch (SQLException e) {
+            throw new SQLException("Error al agregar la actividad al paquete", e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar una actividad de un paquete turístico
+     * @param paqueteId ID del paquete
+     * @param actividadId ID de la actividad
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Boolean> eliminarActividadDePaquete(int paqueteId, int actividadId) throws SQLException {
+        try {
+            return paqueteDAO.eliminarActividadDePaquete(paqueteId, actividadId);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar la actividad del paquete", e);
+        }
+    }
+
+    /**
+     * Este método permite agregar un hospedaje a un paquete turístico
+     * @param paqueteId ID del paquete
+     * @param hospedajeId ID del hospedaje
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Boolean> agregarHospedajeAPaquete(int paqueteId, int hospedajeId) throws SQLException {
+        try {
+            return paqueteDAO.agregarHospedajeAPaquete(paqueteId, hospedajeId);
+        } catch (SQLException e) {
+            throw new SQLException("Error al agregar el hospedaje al paquete", e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar un hospedaje de un paquete turístico
+     * @param paqueteId ID del paquete
+     * @param hospedajeId ID del hospedaje
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Boolean> eliminarHospedajeDePaquete(int paqueteId, int hospedajeId) throws SQLException {
+        try {
+            return paqueteDAO.eliminarHospedajeDePaquete(paqueteId, hospedajeId);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar el hospedaje del paquete", e);
+        }
+    }
+
+    /**
+     * Este método permite validar los datos de un paquete turístico
+     * @param paquete Paquete a validar
+     * @return Respuesta con el resultado de la validación
+     */
+    private Respuesta<PaqueteTuristico> validarDatosPaquete(PaqueteTuristico paquete) {
+        StringBuilder mensaje = new StringBuilder();
+
+        if (paquete.getNombre() == null || paquete.getNombre().isEmpty()) {
+            mensaje.append("El nombre es obligatorio\n");
+        }
+
+        if (paquete.getDescripcion() == null || paquete.getDescripcion().isEmpty()) {
+            mensaje.append("La descripción es obligatoria\n");
+        }
+
+        if (paquete.getPrecioBase() <= 0) {
+            mensaje.append("El precio base debe ser mayor que cero\n");
+        }
+
+        if (paquete.getDuracionDias() <= 0) {
+            mensaje.append("La duración debe ser mayor que cero\n");
+        }
+
+        if (paquete.getFechaInicio() == null) {
+            mensaje.append("La fecha de inicio es obligatoria\n");
+        }
+
+        if (paquete.getFechaFin() == null) {
+            mensaje.append("La fecha de fin es obligatoria\n");
+        }
+
+        if (paquete.getFechaInicio() != null && paquete.getFechaFin() != null &&
+                paquete.getFechaInicio().isAfter(paquete.getFechaFin())) {
+            mensaje.append("La fecha de inicio debe ser anterior a la fecha de fin\n");
+        }
+
+        if (paquete.getCupoMaximo() <= 0) {
+            mensaje.append("El cupo máximo debe ser mayor que cero\n");
+        }
+
+        if (paquete.getCuposDisponibles() < 0) {
+            mensaje.append("Los cupos disponibles no pueden ser negativos\n");
+        }
+
+        if (paquete.getCuposDisponibles() > paquete.getCupoMaximo()) {
+            mensaje.append("Los cupos disponibles no pueden ser mayores que el cupo máximo\n");
+        }
+
+        if (mensaje.length() == 0) {
+            return new Respuesta<>(true, "Los datos son válidos", paquete);
+        }
+
+        return new Respuesta<>(false, mensaje.toString(), null);
+    }
+
+    /**
+     * Este método permite obtener todas las actividades disponibles
+     * @return Lista de actividades
+     * @throws SQLException
+     */
+    public List<Actividad> obtenerActividades() throws SQLException {
+        try {
+            return actividadDAO.obtenerTodasLasActividades();
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener las actividades", e);
+        }
+    }
+
+    /**
+     * Este método permite crear una nueva actividad
+     * @param actividad Actividad a crear
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Actividad> crearActividad(Actividad actividad) throws SQLException {
+        try {
+            // Validar datos de la actividad
+            Respuesta<Actividad> respuestaDatos = validarDatosActividad(actividad);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return actividadDAO.guardarActividad(actividad);
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear la actividad", e);
+        }
+    }
+
+    /**
+     * Este método permite actualizar una actividad existente
+     * @param actividad Actividad con los datos actualizados
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Actividad> actualizarActividad(Actividad actividad) throws SQLException {
+        try {
+            // Validar datos de la actividad
+            Respuesta<Actividad> respuestaDatos = validarDatosActividad(actividad);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return actividadDAO.actualizarActividad(actividad);
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar la actividad", e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar una actividad
+     * @param id ID de la actividad a eliminar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Actividad> eliminarActividad(int id) throws SQLException {
+        try {
+            return actividadDAO.eliminarActividad(id);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar la actividad", e);
+        }
+    }
+
+    /**
+     * Este método permite buscar una actividad por su ID
+     * @param id ID de la actividad a buscar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Actividad> buscarActividadPorId(int id) throws SQLException {
+        try {
+            return actividadDAO.buscarActividadPorId(id);
+        } catch (SQLException e) {
+            throw new SQLException("Error al buscar la actividad", e);
+        }
+    }
+
+    /**
+     * Este método permite validar los datos de una actividad
+     * @param actividad Actividad a validar
+     * @return Respuesta con el resultado de la validación
+     */
+    private Respuesta<Actividad> validarDatosActividad(Actividad actividad) {
+        StringBuilder mensaje = new StringBuilder();
+
+        if (actividad.getNombre() == null || actividad.getNombre().isEmpty()) {
+            mensaje.append("El nombre es obligatorio\n");
+        }
+
+        if (actividad.getDescripcion() == null || actividad.getDescripcion().isEmpty()) {
+            mensaje.append("La descripción es obligatoria\n");
+        }
+
+        if (actividad.getUbicacion() == null || actividad.getUbicacion().isEmpty()) {
+            mensaje.append("La ubicación es obligatoria\n");
+        }
+
+        if (actividad.getPrecio() <= 0) {
+            mensaje.append("El precio debe ser mayor que cero\n");
+        }
+
+        if (actividad.getDuracion() <= 0) {
+            mensaje.append("La duración debe ser mayor que cero\n");
+        }
+
+        if (actividad.getFechaInicio() == null) {
+            mensaje.append("La fecha de inicio es obligatoria\n");
+        }
+
+        if (actividad.getCupoMaximo() <= 0) {
+            mensaje.append("El cupo máximo debe ser mayor que cero\n");
+        }
+
+        if (actividad.getCuposDisponibles() < 0) {
+            mensaje.append("Los cupos disponibles no pueden ser negativos\n");
+        }
+
+        if (actividad.getCuposDisponibles() > actividad.getCupoMaximo()) {
+            mensaje.append("Los cupos disponibles no pueden ser mayores que el cupo máximo\n");
+        }
+
+        if (mensaje.length() == 0) {
+            return new Respuesta<>(true, "Los datos son válidos", actividad);
+        }
+
+        return new Respuesta<>(false, mensaje.toString(), null);
+    }
+
+
+    /**
+     * Este método permite obtener todos los hospedajes disponibles
+     * @return Lista de hospedajes
+     * @throws SQLException
+     */
+    public List<Hospedaje> obtenerHospedajes() throws SQLException {
+        try {
+            return hospedajeDAO.obtenerTodosLosHospedajes();
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener los hospedajes", e);
+        }
+    }
+
+    /**
+     * Este método permite crear un nuevo hospedaje
+     * @param hospedaje Hospedaje a crear
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Hospedaje> crearHospedaje(Hospedaje hospedaje) throws SQLException {
+        try {
+            // Validar datos del hospedaje
+            Respuesta<Hospedaje> respuestaDatos = validarDatosHospedaje(hospedaje);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return hospedajeDAO.guardarHospedaje(hospedaje);
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear el hospedaje", e);
+        }
+    }
+
+    /**
+     * Este método permite actualizar un hospedaje existente
+     * @param hospedaje Hospedaje con los datos actualizados
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Hospedaje> actualizarHospedaje(Hospedaje hospedaje) throws SQLException {
+        try {
+            // Validar datos del hospedaje
+            Respuesta<Hospedaje> respuestaDatos = validarDatosHospedaje(hospedaje);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return hospedajeDAO.actualizarHospedaje(hospedaje);
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar el hospedaje", e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar un hospedaje
+     * @param id ID del hospedaje a eliminar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Hospedaje> eliminarHospedaje(int id) throws SQLException {
+        try {
+            return hospedajeDAO.eliminarHospedaje(id);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar el hospedaje", e);
+        }
+    }
+
+    /**
+     * Este método permite buscar un hospedaje por su ID
+     * @param id ID del hospedaje a buscar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Hospedaje> buscarHospedajePorId(int id) throws SQLException {
+        try {
+            return hospedajeDAO.buscarHospedajePorId(id);
+        } catch (SQLException e) {
+            throw new SQLException("Error al buscar el hospedaje", e);
+        }
+    }
+
+    /**
+     * Este método permite validar los datos de un hospedaje
+     * @param hospedaje Hospedaje a validar
+     * @return Respuesta con el resultado de la validación
+     */
+    private Respuesta<Hospedaje> validarDatosHospedaje(Hospedaje hospedaje) {
+        StringBuilder mensaje = new StringBuilder();
+
+        if (hospedaje.getNombre() == null || hospedaje.getNombre().isEmpty()) {
+            mensaje.append("El nombre es obligatorio\n");
+        }
+
+        if (hospedaje.getCiudad() == null || hospedaje.getCiudad().isEmpty()) {
+            mensaje.append("La ciudad es obligatoria\n");
+        }
+
+        if (hospedaje.getDireccion() == null || hospedaje.getDireccion().isEmpty()) {
+            mensaje.append("La dirección es obligatoria\n");
+        }
+
+        if (hospedaje.getTelefono() == null || hospedaje.getTelefono().isEmpty()) {
+            mensaje.append("El teléfono es obligatorio\n");
+        }
+
+        if (hospedaje.getEstrellas() < 1 || hospedaje.getEstrellas() > 5) {
+            mensaje.append("Las estrellas deben estar entre 1 y 5\n");
+        }
+
+        if (hospedaje.getDescripcion() == null || hospedaje.getDescripcion().isEmpty()) {
+            mensaje.append("La descripción es obligatoria\n");
+        }
+
+        if (mensaje.length() == 0) {
+            return new Respuesta<>(true, "Los datos son válidos", hospedaje);
+        }
+
+        return new Respuesta<>(false, mensaje.toString(), null);
+    }
 
 }

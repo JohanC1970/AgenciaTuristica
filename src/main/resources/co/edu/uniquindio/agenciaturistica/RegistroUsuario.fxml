@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="550.0" prefWidth="500.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.RegistroUsuarioController">
+    <children>
+        <VBox alignment="CENTER" layoutX="100.0" layoutY="14.0" prefHeight="550.0" prefWidth="500.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <VBox alignment="CENTER" prefHeight="80.0" prefWidth="460.0">
+                    <children>
+                        <Label text="Registro de Usuario" textFill="#2c3e50">
+                            <font>
+                                <Font name="System Bold" size="22.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </Label>
+                        <Label text="Por favor complete el formulario para crear su cuenta" textAlignment="CENTER" textFill="#7f8c8d" wrapText="true">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <ScrollPane fitToWidth="true" prefHeight="380.0" prefWidth="460.0" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                    <content>
+                        <VBox prefWidth="460.0" spacing="10.0">
+                            <children>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Identificación *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtIdentificacion" prefHeight="35.0" promptText="Ingrese su número de identificación">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Nombre *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtNombre" prefHeight="35.0" promptText="Ingrese su nombre">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Apellido *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtApellido" prefHeight="35.0" promptText="Ingrese su apellido">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Correo Electrónico *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtEmail" prefHeight="35.0" promptText="Ingrese su correo electrónico">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Contraseña *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <PasswordField fx:id="txtPassword" prefHeight="35.0" promptText="Mínimo 6 caracteres">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </PasswordField>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Confirmar Contraseña *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <PasswordField fx:id="txtConfirmarPassword" prefHeight="35.0" promptText="Repita su contraseña">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </PasswordField>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Tipo de Usuario *" textFill="#34495e">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <ComboBox fx:id="comboTipoUsuario" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el tipo de usuario" />
+                                    </children>
+                                </VBox>
+
+                                <Label fx:id="lblError" alignment="CENTER" prefHeight="18.0" prefWidth="460.0" textFill="#e74c3c" visible="false">
+                                    <font>
+                                        <Font size="13.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+                <HBox alignment="CENTER" spacing="15.0">
+                    <children>
+                        <Button fx:id="btnRegistrar" defaultButton="true" mnemonicParsing="false" onAction="#registrarUsuario" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3498db; -fx-background-radius: 5;" text="Registrar" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Button fx:id="btnCancelar" cancelButton="true" mnemonicParsing="false" onAction="#cancelar" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" text="Cancelar" textFill="#7f8c8d">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox alignment="CENTER" prefHeight="30.0" prefWidth="460.0">
+                    <children>
+                        <Label text="¿Ya tienes una cuenta?" textFill="#7f8c8d">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Label>
+                        <Button fx:id="btnIrLogin" mnemonicParsing="false" onAction="#irAlLogin" style="-fx-background-color: transparent;" text="Iniciar sesión" textFill="#3498db">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                </HBox>
+
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </VBox>
+    </children>
+</AnchorPane>
