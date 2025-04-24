@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.EmpleadoReservasController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;">
+            <children>
+                <Label text="Gestión de Reservas" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#nuevaReserva" prefHeight="40.0" style="-fx-background-color: #2ecc71;" text="Nueva Reserva" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Búsqueda por:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <TextField fx:id="txtBusqueda" prefHeight="30.0" prefWidth="250.0" promptText="ID o Cliente" />
+                                <Button mnemonicParsing="false" onAction="#buscarReserva" prefHeight="30.0" style="-fx-background-color: #3498db;" text="Buscar" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <Separator orientation="VERTICAL" prefHeight="200.0">
+                    <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                    </HBox.margin>
+                </Separator>
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Filtrar por fechas:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <DatePicker fx:id="dateFechaInicio" prefHeight="30.0" prefWidth="130.0" promptText="Fecha inicio" />
+                                <DatePicker fx:id="dateFechaFin" prefHeight="30.0" prefWidth="130.0" promptText="Fecha fin" />
+                                <Button mnemonicParsing="false" onAction="#filtrarPorFechas" prefHeight="30.0" style="-fx-background-color: #3498db;" text="Filtrar" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Label text="Estado:">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <ComboBox fx:id="comboEstado" onAction="#filtrarPorEstado" prefHeight="30.0" prefWidth="150.0" promptText="Seleccione estado" />
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label text="Total reservas:">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblTotalReservas" text="0">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0" />
+            </padding>
+        </HBox>
+        <TableView fx:id="tablaReservas" prefHeight="350.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="colCliente" prefWidth="120.0" text="Cliente" />
+                <TableColumn fx:id="colFechaInicio" prefWidth="100.0" text="Fecha Inicio" />
+                <TableColumn fx:id="colFechaFin" prefWidth="100.0" text="Fecha Fin" />
+                <TableColumn fx:id="colPrecioTotal" prefWidth="100.0" text="Precio Total" />
+                <TableColumn fx:id="colEstado" prefWidth="100.0" text="Estado" />
+                <TableColumn fx:id="colAcciones" prefWidth="120.0" text="Acciones" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+        <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Button mnemonicParsing="false" onAction="#exportarReservas" style="-fx-background-color: #f39c12;" text="Exportar a Excel" textFill="WHITE">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#generarReporteReservas" style="-fx-background-color: #9b59b6;" text="Generar Reporte" textFill="WHITE">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblMensaje" textFill="#e74c3c">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.FormularioClienteController">
+    <children>
+        <VBox layoutX="200.0" layoutY="111.0" prefHeight="500.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;">
+                    <children>
+                        <Label fx:id="lblTitulo" text="Nuevo Cliente" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="20.0" />
+                            </font>
+                            <HBox.margin>
+                                <Insets left="20.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
+                <GridPane hgap="10.0" vgap="10.0">
+                    <children>
+                        <Label text="Identificación:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtIdentificacion" prefHeight="30.0" GridPane.columnIndex="1" />
+                        <Label text="Nombre:" GridPane.rowIndex="1">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtNombre" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Apellido:" GridPane.rowIndex="2">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtApellido" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Correo electrónico:" GridPane.rowIndex="3">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtCorreo" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Teléfono:" GridPane.rowIndex="4">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtTelefono" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label text="Fecha de nacimiento:" GridPane.rowIndex="5">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <DatePicker fx:id="dateFechaNacimiento" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    </children>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="244.0" minWidth="10.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="390.0" minWidth="10.0" prefWidth="390.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+                    </VBox.margin>
+                </GridPane>
+                <Label fx:id="lblError" alignment="CENTER" prefHeight="30.0" prefWidth="560.0" textFill="#e74c3c">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
+                    </VBox.margin>
+                </Label>
+                <HBox alignment="CENTER" prefHeight="80.0" spacing="20.0">
+                    <children>
+                        <Button fx:id="btnGuardar" defaultButton="true" mnemonicParsing="false" onAction="#guardarCliente" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2ecc71;" text="Guardar" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Button cancelButton="true" mnemonicParsing="false" onAction="#cancelar" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #e74c3c;" text="Cancelar" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

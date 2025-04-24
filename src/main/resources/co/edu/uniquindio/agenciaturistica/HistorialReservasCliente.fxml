@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.HistorialReservasClienteController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;">
+            <children>
+                <Label text="Historial de Reservas del Cliente" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblNombreCliente" text="Nombre Cliente" textFill="WHITE">
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Label text="Total de reservas:">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblTotalReservas" text="0">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+            </children>
+            <padding>
+                <Insets left="20.0" right="20.0" />
+            </padding>
+        </HBox>
+        <TableView fx:id="tablaReservas" prefHeight="350.0" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="100.0" text="ID Reserva" />
+                <TableColumn fx:id="colFechaInicio" prefWidth="150.0" text="Fecha Inicio" />
+                <TableColumn fx:id="colFechaFin" prefWidth="150.0" text="Fecha Fin" />
+                <TableColumn fx:id="colPrecioTotal" prefWidth="150.0" text="Precio Total" />
+                <TableColumn fx:id="colEstado" prefWidth="100.0" text="Estado" />
+                <TableColumn fx:id="colAcciones" prefWidth="100.0" text="Acciones" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+        <HBox alignment="CENTER" prefHeight="50.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Button cancelButton="true" mnemonicParsing="false" onAction="#cerrar" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #e74c3c;" text="Cerrar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>

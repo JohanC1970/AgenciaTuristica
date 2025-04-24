@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.EmpleadoClientesController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;">
+            <children>
+                <Label text="Gestión de Clientes" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#nuevoCliente" prefHeight="40.0" style="-fx-background-color: #2ecc71;" text="Nuevo Cliente" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Label text="Buscar:">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="txtBusqueda" prefHeight="30.0" prefWidth="250.0" promptText="Nombre, identificación o correo" />
+                <Button mnemonicParsing="false" onAction="#buscarCliente" prefHeight="30.0" style="-fx-background-color: #3498db;" text="Buscar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label text="Total clientes:" />
+                <Label fx:id="lblTotalClientes" text="0" />
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0" />
+            </padding>
+        </HBox>
+        <TableView fx:id="tablaClientes" prefHeight="350.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colIdentificacion" prefWidth="100.0" text="Identificación" />
+                <TableColumn fx:id="colNombre" prefWidth="120.0" text="Nombre" />
+                <TableColumn fx:id="colApellido" prefWidth="120.0" text="Apellido" />
+                <TableColumn fx:id="colCorreo" prefWidth="150.0" text="Correo" />
+                <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
+                <TableColumn fx:id="colAcciones" prefWidth="120.0" text="Acciones" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+        <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Button mnemonicParsing="false" onAction="#exportarClientes" style="-fx-background-color: #f39c12;" text="Exportar a Excel" textFill="WHITE">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#verHistorialReservas" style="-fx-background-color: #9b59b6;" text="Ver Historial de Reservas" textFill="WHITE">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblMensaje" textFill="#e74c3c">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>

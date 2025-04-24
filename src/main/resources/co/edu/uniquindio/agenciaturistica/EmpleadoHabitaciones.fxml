@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.EmpleadoHabitacionesController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;">
+            <children>
+                <Label fx:id="lblTituloHospedaje" text="Habitaciones de Hospedaje" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#nuevaHabitacion" prefHeight="40.0" style="-fx-background-color: #2ecc71;" text="Nueva Habitación" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label text="Total habitaciones:" />
+                <Label fx:id="lblTotalHabitaciones" text="0" />
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0" />
+            </padding>
+        </HBox>
+        <TableView fx:id="tablaHabitaciones" prefHeight="350.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="colTipo" prefWidth="150.0" text="Tipo" />
+                <TableColumn fx:id="colCapacidad" prefWidth="100.0" text="Capacidad" />
+                <TableColumn fx:id="colPrecio" prefWidth="120.0" text="Precio/Noche" />
+                <TableColumn fx:id="colDisponibilidad" prefWidth="120.0" text="Disponibilidad" />
+                <TableColumn fx:id="colAcciones" prefWidth="120.0" text="Acciones" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+        <HBox alignment="CENTER" prefHeight="50.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+            <children>
+                <Button cancelButton="true" mnemonicParsing="false" onAction="#cerrar" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #e74c3c;" text="Cerrar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>

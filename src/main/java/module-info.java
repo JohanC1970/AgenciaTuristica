@@ -4,6 +4,9 @@ module co.edu.uniquindio.agenciaturistica {  // ¡Este nombre debe usarse en tod
     requires java.sql;
     requires jbcrypt;
     requires java.mail;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
+
 
     opens co.edu.uniquindio.agenciaturistica.application to javafx.fxml;
     opens co.edu.uniquindio.agenciaturistica.controller to javafx.fxml;
