@@ -401,7 +401,7 @@ public class GestionReservasController implements Initializable {
                 new SimpleStringProperty(cellData.getValue().getFormaPago().toString()));
 
         // Botones de acciones
-        colAcciones.setCellFactory(crearBotonesAcciones(tabla));
+        //colAcciones.setCellFactory(crearBotonesAcciones(true));
     }
 
     /**
@@ -579,29 +579,25 @@ public class GestionReservasController implements Initializable {
 
 
     /**
-     * Método para crear los botones de acciones (ver, editar, cancelar, etc.)
+     * Método para crear los botones de acciones para las tablas
+     * @param botonesLimitados Si es true, solo muestra el botón de ver detalles
      */
-    private Callback<TableColumn<Reserva, String>, TableCell<Reserva, String>> crearBotonesAcciones(TableView<Reserva> tabla) {
+    private Callback<TableColumn<Reserva, String>, TableCell<Reserva, String>> crearBotonesAcciones(boolean botonesLimitados) {
         return new Callback<TableColumn<Reserva, String>, TableCell<Reserva, String>>() {
             @Override
             public TableCell<Reserva, String> call(final TableColumn<Reserva, String> param) {
                 return new TableCell<Reserva, String>() {
                     private final Button btnVer = new Button("Ver");
                     private final Button btnEditar = new Button("Editar");
-                    private final Button btnConfirmar = new Button("Confirmar");
-                    private final Button btnCompletar = new Button("Completar");
                     private final Button btnCancelar = new Button("Cancelar");
-                    private final HBox pane = new HBox(5);
+                    private final HBox pane = botonesLimitados ?
+                            new HBox(5, btnVer) : new HBox(5, btnVer, btnEditar, btnCancelar);
 
                     {
-                        // Estilo de botones
                         btnVer.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
                         btnEditar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white;");
-                        btnConfirmar.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white;");
-                        btnCompletar.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white;");
                         btnCancelar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
 
-                        // Configurar acciones de botones
                         btnVer.setOnAction(event -> {
                             Reserva reserva = getTableView().getItems().get(getIndex());
                             verDetallesReserva(reserva);
@@ -610,16 +606,6 @@ public class GestionReservasController implements Initializable {
                         btnEditar.setOnAction(event -> {
                             Reserva reserva = getTableView().getItems().get(getIndex());
                             editarReserva(reserva);
-                        });
-
-                        btnConfirmar.setOnAction(event -> {
-                            Reserva reserva = getTableView().getItems().get(getIndex());
-                            confirmarReserva(reserva);
-                        });
-
-                        btnCompletar.setOnAction(event -> {
-                            Reserva reserva = getTableView().getItems().get(getIndex());
-                            completarReserva(reserva);
                         });
 
                         btnCancelar.setOnAction(event -> {
@@ -635,30 +621,28 @@ public class GestionReservasController implements Initializable {
                         if (empty) {
                             setGraphic(null);
                         } else {
-                            pane.getChildren().clear();
+                            // Si no estamos en modo limitado, verificamos el estado para mostrar u ocultar botones
+                            if (!botonesLimitados) {
+                                Reserva reserva = getTableView().getItems().get(getIndex());
+                                EstadoReserva estado = reserva.getEstadoReserva();
 
-                            // Siempre mostrar botón de ver detalles
-                            pane.getChildren().add(btnVer);
-
-                            Reserva reserva = getTableView().getItems().get(getIndex());
-
-                            // Mostrar botones según el estado de la reserva
-                            if (reserva.getEstadoReserva() == EstadoReserva.PENDIENTE) {
-                                pane.getChildren().addAll(btnEditar, btnConfirmar, btnCancelar);
-                            } else if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA) {
-                                pane.getChildren().addAll(btnEditar, btnCompletar, btnCancelar);
-                            } else if (reserva.getEstadoReserva() == EstadoReserva.COMPLETADA ||
-                                    reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
-                                // No mostrar acciones adicionales para reservas completadas o canceladas
+                                if (estado == EstadoReserva.COMPLETADA || estado == EstadoReserva.CANCELADA) {
+                                    // Solo mostrar el botón de ver para reservas completadas o canceladas
+                                    HBox newPane = new HBox(5, btnVer);
+                                    setGraphic(newPane);
+                                } else {
+                                    setGraphic(pane);
+                                }
+                            } else {
+                                setGraphic(pane);
                             }
-
-                            setGraphic(pane);
                         }
                     }
                 };
             }
         };
     }
+
 
     /**
      * Método para establecer la aplicación principal
@@ -983,34 +967,39 @@ public class GestionReservasController implements Initializable {
      * @param reserva Reserva a confirmar
      */
     private void confirmarReserva(Reserva reserva) {
-        // Verificar si la reserva está en estado PENDIENTE
-        if (reserva.getEstadoReserva() != EstadoReserva.PENDIENTE) {
-            mostrarAlerta("Aviso", "Solo se pueden confirmar reservas en estado PENDIENTE", AlertType.WARNING);
-            return;
-        }
 
-        // Confirmar la acción
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmar Reserva");
-        alert.setHeaderText("¿Está seguro de confirmar esta reserva?");
-        alert.setContentText("ID Reserva: " + reserva.getId() + "\n" +
-                "Cliente: " + reserva.getCliente().getNombre() + " " + reserva.getCliente().getApellido());
+       try{
+           // Verificar si la reserva está en estado PENDIENTE
+           if (reserva.getEstadoReserva() != EstadoReserva.PENDIENTE) {
+               mostrarAlerta("Aviso", "Solo se pueden confirmar reservas en estado PENDIENTE", AlertType.WARNING);
+               return;
+           }
 
-        Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == javafx.scene.control.ButtonType.OK) {
-            // Confirmar la reserva
-            Respuesta<Reserva> respuesta = ModelFactoryController.getInstance()
-                    .getSistema().confirmarReserva(reserva.getId());
+           // Confirmar la acción
+           Alert alert = new Alert(AlertType.CONFIRMATION);
+           alert.setTitle("Confirmar Reserva");
+           alert.setHeaderText("¿Está seguro de confirmar esta reserva?");
+           alert.setContentText("ID Reserva: " + reserva.getId() + "\n" +
+                   "Cliente: " + reserva.getCliente().getNombre() + " " + reserva.getCliente().getApellido());
 
-            if (respuesta.isExito()) {
-                mostrarAlerta("Éxito", respuesta.getMensaje(), AlertType.INFORMATION);
+           Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
+           if (result.isPresent() && result.get() == javafx.scene.control.ButtonType.OK) {
+               // Confirmar la reserva
+               Respuesta<Reserva> respuesta = ModelFactoryController.getInstance()
+                       .getSistema().confirmarReserva(reserva.getId());
 
-                // Recargar reservas
-                cargarReservas();
-            } else {
-                mostrarAlerta("Error", respuesta.getMensaje(), AlertType.ERROR);
-            }
-        }
+               if (respuesta.isExito()) {
+                   mostrarAlerta("Éxito", respuesta.getMensaje(), AlertType.INFORMATION);
+
+                   // Recargar reservas
+                   cargarReservas();
+               } else {
+                   mostrarAlerta("Error", respuesta.getMensaje(), AlertType.ERROR);
+               }
+           }
+       } catch (SQLException e) {
+           mostrarAlerta("Error", "Error al confirmar la reserva: " + e.getMessage(), AlertType.ERROR);
+       }
 
     }
 

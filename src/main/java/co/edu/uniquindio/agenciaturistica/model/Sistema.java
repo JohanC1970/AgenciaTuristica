@@ -1012,20 +1012,12 @@ public class Sistema {
         return reservaDAO.buscarReservasPorEstado(estado);
     }
 
-    public Respuesta<Reserva> confirmarReserva(String id) {
-        try {
-            return reservaDAO.confirmarReserva(id);
-        } catch (SQLException e) {
-            return new Respuesta<>(false, "Error al confirmar la reserva: " + e.getMessage(), null);
-        }
+    public Respuesta<Reserva> confirmarReserva(String id) throws SQLException {
+        return reservaDAO.confirmarReserva(id);
     }
 
-    public Respuesta<Reserva> completarReserva(String id) {
-        try {
-            return reservaDAO.completarReserva(id);
-        } catch (SQLException e) {
-            return new Respuesta<>(false, "Error al completar la reserva: " + e.getMessage(), null);
-        }
+    public Respuesta<Reserva> completarReserva(String id) throws SQLException {
+        return reservaDAO.completarReserva(id);
     }
 
     public Respuesta<Reserva> cancelarReserva(String id) throws SQLException {
@@ -1044,5 +1036,16 @@ public class Sistema {
         return reservaDAO.generarReporteOcupacion(fechaInicio, fechaFin);
     }
 
+    public Respuesta<Reserva> crearReserva(Reserva reserva) throws SQLException {
+        return reservaDAO.crearReserva(reserva);
+    }
+
+    public Respuesta<Reserva> modificarReserva(Reserva reserva) throws SQLException {
+        return reservaDAO.modificarReserva(reserva);
+    }
+
+    public Respuesta<PaqueteTuristico> buscarPaquetePorId(int id) throws SQLException {
+        return paqueteDAO.buscarPaquetePorId(id);
+    }
 
 }
