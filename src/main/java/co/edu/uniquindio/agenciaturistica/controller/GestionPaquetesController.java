@@ -322,10 +322,10 @@ public class GestionPaquetesController implements Initializable {
             Parent root = loader.load();
 
             // Obtener el controlador y establecer el paquete seleccionado
-            GestionActividadesPaqueteController controller = loader.getController();
-            controller.setAplicacion(aplicacion);
-            controller.setPaquete(paqueteSeleccionado);
-            controller.inicializarDatos();
+            //GestionActividadesPaqueteController controller = loader.getController();
+            //controller.setAplicacion(aplicacion);
+            //controller.setPaquete(paqueteSeleccionado);
+            //controller.inicializarDatos();
 
             // Mostrar la ventana
             Stage stage = new Stage();
@@ -360,10 +360,10 @@ public class GestionPaquetesController implements Initializable {
             Parent root = loader.load();
 
             // Obtener el controlador y establecer el paquete seleccionado
-            GestionHospedajesPaqueteController controller = loader.getController();
-            controller.setAplicacion(aplicacion);
-            controller.setPaquete(paqueteSeleccionado);
-            controller.inicializarDatos();
+            //GestionHospedajesPaqueteController controller = loader.getController();
+            //controller.setAplicacion(aplicacion);
+            //controller.setPaquete(paqueteSeleccionado);
+            //controller.inicializarDatos();
 
             // Mostrar la ventana
             Stage stage = new Stage();

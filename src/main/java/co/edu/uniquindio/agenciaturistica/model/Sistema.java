@@ -875,4 +875,119 @@ public class Sistema {
         return new Respuesta<>(false, mensaje.toString(), null);
     }
 
+
+
+    // Añadir estos métodos a la clase Sistema.java
+
+    /**
+     * Este método permite obtener todos los tipos de habitación disponibles
+     * @return Lista de tipos de habitación
+     * @throws SQLException
+     */
+    public List<TipoHabitacion> obtenerTiposHabitacion() throws SQLException {
+        try {
+            return habitacionDAO.obtenerTiposHabitacion();
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener los tipos de habitación: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Este método permite obtener todas las habitaciones de un hospedaje
+     * @param hospedajeId ID del hospedaje
+     * @return Lista de habitaciones
+     * @throws SQLException
+     */
+    public List<Habitacion> obtenerHabitacionesPorHospedaje(int hospedajeId) throws SQLException {
+        try {
+            return habitacionDAO.obtenerHabitacionesPorHospedaje(hospedajeId);
+        } catch (SQLException e) {
+            throw new SQLException("Error al obtener las habitaciones del hospedaje: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Este método permite crear una nueva habitación en un hospedaje
+     * @param hospedajeId ID del hospedaje
+     * @param habitacion Habitación a crear
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Habitacion> crearHabitacion(int hospedajeId, Habitacion habitacion) throws SQLException {
+        try {
+            // Validar datos de la habitación
+            Respuesta<Habitacion> respuestaDatos = validarDatosHabitacion(habitacion);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return habitacionDAO.guardarHabitacion(hospedajeId, habitacion);
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear la habitación: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Este método permite actualizar una habitación existente
+     * @param hospedajeId ID del hospedaje
+     * @param habitacion Habitación con los datos actualizados
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Habitacion> actualizarHabitacion(int hospedajeId, Habitacion habitacion) throws SQLException {
+        try {
+            // Validar datos de la habitación
+            Respuesta<Habitacion> respuestaDatos = validarDatosHabitacion(habitacion);
+            if (!respuestaDatos.isExito()) {
+                return respuestaDatos;
+            }
+
+            return habitacionDAO.actualizarHabitacion(hospedajeId, habitacion);
+        } catch (SQLException e) {
+            throw new SQLException("Error al actualizar la habitación: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Este método permite eliminar una habitación
+     * @param hospedajeId ID del hospedaje
+     * @param habitacionId ID de la habitación a eliminar
+     * @return Respuesta con el resultado de la operación
+     * @throws SQLException
+     */
+    public Respuesta<Habitacion> eliminarHabitacion(int hospedajeId, int habitacionId) throws SQLException {
+        try {
+            return habitacionDAO.eliminarHabitacion(hospedajeId, habitacionId);
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar la habitación: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Este método permite validar los datos de una habitación
+     * @param habitacion Habitación a validar
+     * @return Respuesta con el resultado de la validación
+     */
+    private Respuesta<Habitacion> validarDatosHabitacion(Habitacion habitacion) {
+        StringBuilder mensaje = new StringBuilder();
+
+        if (habitacion.getTipoHabitacion() == null) {
+            mensaje.append("El tipo de habitación es obligatorio\n");
+        }
+
+        if (habitacion.getCapacidad() <= 0) {
+            mensaje.append("La capacidad debe ser mayor que cero\n");
+        }
+
+        if (habitacion.getPrecioPorNoche() <= 0) {
+            mensaje.append("El precio por noche debe ser mayor que cero\n");
+        }
+
+        if (mensaje.length() == 0) {
+            return new Respuesta<>(true, "Los datos son válidos", habitacion);
+        }
+
+        return new Respuesta<>(false, mensaje.toString(), null);
+    }
+
 }
