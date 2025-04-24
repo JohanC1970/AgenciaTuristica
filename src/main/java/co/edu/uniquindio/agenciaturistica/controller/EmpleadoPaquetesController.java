@@ -1,5 +1,6 @@
 package co.edu.uniquindio.agenciaturistica.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -9,8 +10,6 @@ import java.util.ResourceBundle;
 
 import co.edu.uniquindio.agenciaturistica.application.Aplicacion;
 import co.edu.uniquindio.agenciaturistica.model.PaqueteTuristico;
-import co.edu.uniquindio.agenciaturistica.util.Respuesta;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -29,6 +29,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -282,12 +283,30 @@ public class EmpleadoPaquetesController implements Initializable {
     @FXML
     void nuevoPaquete(ActionEvent event) {
         try {
-            // Aquí se podría abrir un formulario para crear un nuevo paquete turístico
-            mostrarAlerta("Información", "Funcionalidad no implementada: Nuevo Paquete", AlertType.INFORMATION);
-        } catch (Exception e) {
-            mostrarAlerta("Error", "Error al abrir formulario de nuevo paquete: " + e.getMessage(), AlertType.ERROR);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionPaquetes.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el controlador del formulario cargado
+            GestionPaquetesController controller = loader.getController();
+
+            // Si tu controlador necesita referencia a la clase principal
+            controller.setAplicacion(aplicacion);
+
+            // Crear una nueva ventana (Stage)
+            Stage stage = new Stage();
+            stage.setTitle("Nuevo Paquete Turístico");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL); // Bloquea otras ventanas hasta que se cierre
+            stage.initOwner(((Node) event.getSource()).getScene().getWindow()); // Padre
+
+            stage.showAndWait(); // Espera hasta que se cierre
+
+        } catch (IOException e) {
+            mostrarAlerta("Error", "Error al abrir formulario de nuevo paquete: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
+
 
     /**
      * Método para ver los detalles de un paquete turístico

@@ -10,7 +10,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.HistorialReservasClienteController">
     <children>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color:  #3498db;">
             <children>
                 <Label text="Historial de Reservas del Cliente" textFill="WHITE">
                     <font>

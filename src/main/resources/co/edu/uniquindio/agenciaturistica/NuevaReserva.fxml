@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox spacing="10" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.NuevaReservaController">
+   <children>
+       <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Nueva Reserva - Paquete Turístico" />
+   
+       <!-- Información del paquete -->
+       <Label style="-fx-font-weight: bold;" text="Información del Paquete:" />
+       <GridPane hgap="10" vgap="5">
+          <children>
+              <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+              <Label fx:id="lblNombrePaquete" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+      
+              <Label text="Descripción:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+              <Label fx:id="lblDescripcion" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      
+              <Label text="Duración (días):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+              <Label fx:id="lblDuracion" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+              <Label text="Precio base:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+              <Label fx:id="lblPrecioBase" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      
+              <Label text="Cupos disponibles:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+              <Label fx:id="lblCuposDisponibles" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+          </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+       </GridPane>
+   
+       <!-- Datos del cliente -->
+       <Label style="-fx-font-weight: bold;" text="Datos del Cliente:" />
+       <ComboBox fx:id="cbClientes" promptText="Seleccione un cliente" />
+   
+       <!-- Habitaciones -->
+       <Label style="-fx-font-weight: bold;" text="Habitaciones:" />
+       <TableView fx:id="tblHabitaciones">
+           <columns>
+               <TableColumn prefWidth="50" text="ID">
+                   <cellValueFactory>
+                  <PropertyValueFactory property="id" />
+               </cellValueFactory>
+               </TableColumn>
+               <TableColumn prefWidth="100" text="Tipo">
+                   <cellValueFactory>
+                  <PropertyValueFactory property="tipoHabitacion" />
+               </cellValueFactory>
+               </TableColumn>
+               <TableColumn prefWidth="80" text="Capacidad">
+                   <cellValueFactory>
+                  <PropertyValueFactory property="capacidad" />
+               </cellValueFactory>
+               </TableColumn>
+               <TableColumn prefWidth="100" text="Precio/noche">
+                   <cellValueFactory>
+                  <PropertyValueFactory property="precioPorNoche" />
+               </cellValueFactory>
+               </TableColumn>
+               <TableColumn prefWidth="80" text="Seleccionar">
+                   <cellValueFactory>
+                  <PropertyValueFactory property="seleccionada" />
+               </cellValueFactory>
+               </TableColumn>
+           </columns>
+       </TableView>
+   
+       <!-- Datos de la reserva -->
+       <Label style="-fx-font-weight: bold;" text="Datos de la Reserva:" />
+       <GridPane hgap="10" vgap="5">
+          <children>
+              <Label text="Fecha inicio:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+              <DatePicker fx:id="dpFechaInicio" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+      
+              <Label text="Fecha fin:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+              <Label fx:id="lblFechaFin" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      
+              <Label text="Forma de pago:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+              <ComboBox fx:id="cbFormaPago" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+              <Label text="Precio total:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+              <Label fx:id="lblPrecioTotal" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+          </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+       </GridPane>
+   
+       <!-- Botones -->
+       <HBox spacing="10" style="-fx-padding: 10 0 0 0;">
+      <children>
+              <Button fx:id="btnGuardar" defaultButton="true" onAction="#guardarReserva" text="Guardar" />
+              <Button fx:id="btnCancelar" cancelButton="true" onAction="#cancelar" text="Cancelar" />
+      </children>
+       </HBox>
+   </children>
+</VBox>

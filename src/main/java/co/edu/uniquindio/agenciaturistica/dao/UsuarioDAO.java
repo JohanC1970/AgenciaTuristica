@@ -117,7 +117,7 @@ public class UsuarioDAO {
                 return new Respuesta<>(false, "El email no está registrado en nuestro sistema", destinatario);
             }
 
-            String query = "UPDATE usuario SET codigo_recuperacion_password = ?, expiracion_codigo_recuperacion_password = ? WHERE email = ?";
+            String query = "UPDATE usuario SET codigo_recuperacion_password = ?, expiracion_codigo_recuperacion = ? WHERE email = ?";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, codigo);
             preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().plusHours(1)));
@@ -525,7 +525,7 @@ public class UsuarioDAO {
                 return new Respuesta<>(false, "El email no está registrado en nuestro sistema", null);
             }
 
-            String query = "UPDATE usuario SET password = ?, codigo_recuperacion_password = NULL, expiracion_codigo_recuperacion_password = NULL WHERE email = ?";
+            String query = "UPDATE usuario SET password = ?, codigo_recuperacion_password = NULL, expiracion_codigo_recuperacion = NULL WHERE email = ?";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, PasswordEncoder.hashPassword(nuevaPassword));
             preparedStatement.setString(2, email);

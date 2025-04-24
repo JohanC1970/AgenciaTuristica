@@ -1,6 +1,7 @@
 package co.edu.uniquindio.agenciaturistica.application;
 
 import co.edu.uniquindio.agenciaturistica.controller.LoginController;
+import co.edu.uniquindio.agenciaturistica.model.Cliente;
 import co.edu.uniquindio.agenciaturistica.model.Empleado;
 import co.edu.uniquindio.agenciaturistica.model.Usuario;
 import javafx.application.Application;
@@ -97,4 +98,6 @@ public class Aplicacion extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+
 }

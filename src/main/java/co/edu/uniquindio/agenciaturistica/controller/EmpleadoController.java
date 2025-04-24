@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import co.edu.uniquindio.agenciaturistica.application.Aplicacion;
 import co.edu.uniquindio.agenciaturistica.model.Usuario;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -73,15 +74,18 @@ public class EmpleadoController implements Initializable {
      */
     public void inicializarInformacion() {
         if (usuarioActual != null) {
-            lblNombreUsuario.setText(usuarioActual.getNombre() + " " + usuarioActual.getApellido());
+            Platform.runLater(() -> {
+                lblNombreUsuario.setText(usuarioActual.getNombre() + " " + usuarioActual.getApellido());
 
-            // Obtener referencia al BorderPane
-            rootPane = (BorderPane) lblNombreUsuario.getScene().getRoot();
+                // Obtener referencia al BorderPane una vez la escena está disponible
+                rootPane = (BorderPane) lblNombreUsuario.getScene().getRoot();
 
-            // Mostrar dashboard por defecto
-            mostrarDashboard(null);
+                // Mostrar dashboard por defecto
+                mostrarDashboard(null);
+            });
         }
     }
+
 
     /**
      * Método para cerrar sesión
@@ -125,13 +129,12 @@ public class EmpleadoController implements Initializable {
     @FXML
     void mostrarClientes(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/EmpleadoClientes.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionClientes.fxml"));
             Parent panel = loader.load();
 
             // Obtener el controlador y establecer la aplicación
-            EmpleadoClientesController controller = loader.getController();
+            GestionClientesController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.inicializarDatos();
 
             // Reemplazar el contenido central
             rootPane.setCenter(panel);
@@ -151,13 +154,12 @@ public class EmpleadoController implements Initializable {
     @FXML
     void mostrarPaquetes(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/EmpleadoPaquetes.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionPaquetes.fxml"));
             Parent panel = loader.load();
 
             // Obtener el controlador y establecer la aplicación
-            EmpleadoPaquetesController controller = loader.getController();
+            GestionPaquetesController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.inicializarDatos();
 
             // Reemplazar el contenido central
             rootPane.setCenter(panel);
@@ -177,13 +179,12 @@ public class EmpleadoController implements Initializable {
     @FXML
     void mostrarActividades(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/EmpleadoActividades.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionActividades.fxml"));
             Parent panel = loader.load();
 
             // Obtener el controlador y establecer la aplicación
-            EmpleadoActividadesController controller = loader.getController();
+            GestionActividadesController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.inicializarDatos();
 
             // Reemplazar el contenido central
             rootPane.setCenter(panel);
@@ -203,13 +204,13 @@ public class EmpleadoController implements Initializable {
     @FXML
     void mostrarHospedajes(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/EmpleadoHospedajes.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionHospedajes.fxml"));
             Parent panel = loader.load();
 
             // Obtener el controlador y establecer la aplicación
-            EmpleadoHospedajesController controller = loader.getController();
+            GestionHospedajesController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.inicializarDatos();
+
 
             // Reemplazar el contenido central
             rootPane.setCenter(panel);
@@ -229,11 +230,11 @@ public class EmpleadoController implements Initializable {
     @FXML
     void mostrarHabitaciones(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/EmpleadoHabitaciones.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionHabitaciones.fxml"));
             Parent panel = loader.load();
 
             // Obtener el controlador y establecer la aplicación
-            EmpleadoHabitacionesController controller = loader.getController();
+            GestionHabitacionesController controller = loader.getController();
             controller.setAplicacion(aplicacion);
             controller.inicializarDatos();
 
@@ -255,13 +256,13 @@ public class EmpleadoController implements Initializable {
     @FXML
     void mostrarReservas(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/EmpleadoReservas.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionReservas.fxml"));
             Parent panel = loader.load();
 
             // Obtener el controlador y establecer la aplicación
-            EmpleadoReservasController controller = loader.getController();
+            GestionReservasController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.inicializarDatos();
+
 
             // Reemplazar el contenido central
             rootPane.setCenter(panel);

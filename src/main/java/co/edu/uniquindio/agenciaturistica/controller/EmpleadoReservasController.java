@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import javafx.scene.Cursor;
 import org.apache.poi.ss.usermodel.*;
@@ -19,10 +17,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import co.edu.uniquindio.agenciaturistica.application.Aplicacion;
 import co.edu.uniquindio.agenciaturistica.model.Cliente;
 import co.edu.uniquindio.agenciaturistica.model.Enums.EstadoReserva;
-import co.edu.uniquindio.agenciaturistica.model.Enums.FormaPago;
 import co.edu.uniquindio.agenciaturistica.model.Reserva;
 import co.edu.uniquindio.agenciaturistica.util.Respuesta;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -516,10 +512,10 @@ public class EmpleadoReservasController implements Initializable {
             Parent root = loader.load();
 
             // Configurar el controlador
-            GenerarReporteController controller = loader.getController();
-            controller.setAplicacion(aplicacion);
-            controller.setFechas(fechaInicio, fechaFin);
-            controller.inicializarDatos();
+//            GenerarReporteController controller = loader.getController();
+//            controller.setAplicacion(aplicacion);
+//            controller.setFechas(fechaInicio, fechaFin);
+//            controller.inicializarDatos();
 
             // Crear una nueva escena
             Scene scene = new Scene(root);
@@ -542,7 +538,7 @@ public class EmpleadoReservasController implements Initializable {
     void nuevaReserva(ActionEvent event) {
         try {
             // Cargar la vista de nueva reserva
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/NuevaReserva.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/NuevaReserva2.fxml"));
             Parent root = loader.load();
 
             // Configurar el controlador
@@ -612,15 +608,15 @@ public class EmpleadoReservasController implements Initializable {
 
         try {
             // Cargar la vista de edición de reserva
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/NuevaReserva.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/NuevaReserva2.fxml"));
             Parent root = loader.load();
 
             // Configurar el controlador
-            NuevaReservaController controller = loader.getController();
-            controller.setAplicacion(aplicacion);
-            controller.setReserva(reserva);
-            controller.setModoEdicion(true);
-            controller.inicializarDatos();
+//            NuevaReservaController controller = loader.getController();
+//            controller.setAplicacion(aplicacion);
+//            controller.setReserva(reserva);
+//            controller.setModoEdicion(true);
+//            controller.inicializarDatos(reserva);
 
             // Crear una nueva escena
             Scene scene = new Scene(root);

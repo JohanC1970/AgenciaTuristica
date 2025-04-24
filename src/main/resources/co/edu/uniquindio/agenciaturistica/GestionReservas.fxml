@@ -8,9 +8,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.GestionReservasController">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.GestionReservasController">
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #e74c3c;" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;" BorderPane.alignment="CENTER">
             <children>
                 <Label text="Gestión de Reservas" textFill="WHITE">
                     <font>

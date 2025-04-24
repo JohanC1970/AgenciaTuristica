@@ -8,9 +8,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.GestionActividadesController">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.GestionActividadesController">
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #9b59b6;" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;" BorderPane.alignment="CENTER">
             <children>
                 <Label text="Gestión de Actividades Turísticas" textFill="WHITE">
                     <font>
@@ -105,14 +105,14 @@
     <right>
         <VBox fx:id="panelFormulario" prefHeight="540.0" prefWidth="300.0" style="-fx-background-color: #f5f6fa; -fx-border-color: #dcdde1; -fx-border-width: 0 0 0 1;" BorderPane.alignment="CENTER">
             <children>
-                <Label alignment="CENTER" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: #9b59b6;" text="Formulario de Actividad" textFill="WHITE">
+                <Label alignment="CENTER" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: #3498db;" text="Formulario de Actividad" textFill="WHITE">
                     <font>
                         <Font name="System Bold" size="16.0" />
                     </font>
                 </Label>
                 <ScrollPane fitToWidth="true" prefHeight="490.0" prefWidth="300.0" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
                     <content>
-                        <VBox spacing="15.0">
+                        <VBox spacing="15.0" style="white: #3498db;">
                             <children>
                                 <VBox spacing="5.0">
                                     <children>
