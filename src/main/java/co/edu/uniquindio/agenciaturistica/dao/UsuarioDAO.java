@@ -231,7 +231,7 @@ public class UsuarioDAO {
             if(existeIdentifiacion(usuario.getIdentificacion())){
                 return new Respuesta<>(false, "La identificación ya está registrada en nuestro sistema", null);
             }
-            String query = "INSERT INTO usuario (nombre, apellido, identificacion, email, password, rol) VALUES (?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO usuario (nombre, apellido, identificacion, email, password, rol, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, usuario.getNombre());
             preparedStatement.setString(2, usuario.getApellido());
@@ -239,6 +239,8 @@ public class UsuarioDAO {
             preparedStatement.setString(4, usuario.getEmail());
             preparedStatement.setString(5, PasswordEncoder.hashPassword(usuario.getPassword()));
             preparedStatement.setString(6, usuario.getRol().toString());
+            preparedStatement.setDate(7, new java.sql.Date(System.currentTimeMillis())); // Aquí le mandas la fecha actual
+
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -262,7 +264,7 @@ public class UsuarioDAO {
      * @throws SQLException
      */
     public boolean existeIdentifiacion(String identificacion) throws SQLException {
-        String query = "SELECT 1 FROM usuario WHERE identicacion = ? LIMIT 1";
+        String query = "SELECT 1 FROM usuario WHERE identificacion = ? LIMIT 1";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, identificacion);

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.agenciaturistica.controller.SeleccionHabitacionController">
+    <top>
+        <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="lblFechas" text="Selección de Habitaciones" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <HBox.margin>
+                                <Insets left="20.0" />
+                            </HBox.margin>
+                        </Label>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblTotal" text="Total seleccionadas: 0" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <HBox.margin>
+                                <Insets right="20.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
+                    <children>
+                        <Label text="Hospedaje:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <ComboBox fx:id="comboHospedaje" prefHeight="30.0" prefWidth="200.0" promptText="Seleccione Hospedaje" />
+                        <Label text="Tipo:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <ComboBox fx:id="comboTipo" prefHeight="30.0" prefWidth="180.0" promptText="Seleccione Tipo" />
+                        <Label text="Capacidad mínima:">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtCapacidadMin" prefHeight="30.0" prefWidth="60.0" promptText="1" />
+                        <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarHabitaciones" prefHeight="30.0" style="-fx-background-color: #3498db;" text="Buscar" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                    </padding>
+                </HBox>
+                <Label fx:id="lblError" alignment="CENTER" prefHeight="20.0" prefWidth="800.0" textFill="#e74c3c">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <TableView fx:id="tablaHabitaciones" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                <TableColumn fx:id="colHospedaje" prefWidth="150.0" text="Hospedaje" />
+                <TableColumn fx:id="colTipo" prefWidth="150.0" text="Tipo" />
+                <TableColumn fx:id="colCapacidad" prefWidth="100.0" text="Capacidad" />
+                <TableColumn fx:id="colPrecio" prefWidth="150.0" text="Precio/Noche" />
+                <TableColumn fx:id="colAcciones" prefWidth="100.0" text="Seleccionar" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="60.0" spacing="20.0" style="-fx-background-color: #ecf0f1;" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="btnSeleccionar" defaultButton="true" mnemonicParsing="false" onAction="#confirmarSeleccion" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2ecc71;" text="Confirmar Selección" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button fx:id="btnCancelar" cancelButton="true" mnemonicParsing="false" onAction="#cancelarSeleccion" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #e74c3c;" text="Cancelar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1048,4 +1048,20 @@ public class Sistema {
         return paqueteDAO.buscarPaquetePorId(id);
     }
 
+    /**
+     * Este método permite verificar si una habitación está disponible para un rango de fechas
+     * @param habitacionId ID de la habitación
+     * @param fechaInicio Fecha de inicio de la reserva
+     * @param fechaFin Fecha de fin de la reserva
+     * @return true si la habitación está disponible, false en caso contrario
+     * @throws SQLException
+     */
+    public boolean verificarDisponibilidadHabitacion(int habitacionId, LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+        try {
+            return habitacionDAO.verificarDisponibilidadHabitacion(habitacionId, fechaInicio, fechaFin);
+        } catch (SQLException e) {
+            throw new SQLException("Error al verificar disponibilidad de habitación: " + e.getMessage(), e);
+        }
+    }
+
 }
