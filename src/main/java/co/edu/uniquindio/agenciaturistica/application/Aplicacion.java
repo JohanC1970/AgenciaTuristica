@@ -1,6 +1,7 @@
 package co.edu.uniquindio.agenciaturistica.application;
 
 import co.edu.uniquindio.agenciaturistica.controller.LoginController;
+import co.edu.uniquindio.agenciaturistica.model.Empleado;
 import co.edu.uniquindio.agenciaturistica.model.Usuario;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -73,6 +74,13 @@ public class Aplicacion extends Application {
      */
     public Usuario getUsuarioActual() {
         return usuarioActual;
+    }
+
+    public Empleado getEmpleadoActual() {
+        if (usuarioActual instanceof Empleado) {
+            return (Empleado) usuarioActual;
+        }
+        return null;
     }
 
     /**

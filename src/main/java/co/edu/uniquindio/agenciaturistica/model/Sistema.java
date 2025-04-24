@@ -1,6 +1,7 @@
 package co.edu.uniquindio.agenciaturistica.model;
 
 import co.edu.uniquindio.agenciaturistica.dao.*;
+import co.edu.uniquindio.agenciaturistica.model.Enums.EstadoReserva;
 import co.edu.uniquindio.agenciaturistica.model.Enums.Rol;
 import co.edu.uniquindio.agenciaturistica.util.EmailSender;
 import co.edu.uniquindio.agenciaturistica.util.Respuesta;
@@ -989,5 +990,59 @@ public class Sistema {
 
         return new Respuesta<>(false, mensaje.toString(), null);
     }
+
+
+    public List<Reserva> obtenerReservas() throws SQLException {
+        return reservaDAO.obtenerTodasLasReservas();
+    }
+
+    public List<Reserva> buscarReservasPorFechas(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+        return reservaDAO.buscarReservasPorFechas(fechaInicio, fechaFin);
+    }
+
+    public Respuesta<Reserva> buscarReservaPorId(String textoBusqueda) {
+        return null;
+    }
+
+    public List<Reserva> buscarReservasPorCliente(String textoBusqueda) throws SQLException {
+        return reservaDAO.buscarReservasPorCliente(textoBusqueda);
+    }
+
+    public List<Reserva> buscarReservasPorEstado(EstadoReserva estado) throws SQLException {
+        return reservaDAO.buscarReservasPorEstado(estado);
+    }
+
+    public Respuesta<Reserva> confirmarReserva(String id) {
+        try {
+            return reservaDAO.confirmarReserva(id);
+        } catch (SQLException e) {
+            return new Respuesta<>(false, "Error al confirmar la reserva: " + e.getMessage(), null);
+        }
+    }
+
+    public Respuesta<Reserva> completarReserva(String id) {
+        try {
+            return reservaDAO.completarReserva(id);
+        } catch (SQLException e) {
+            return new Respuesta<>(false, "Error al completar la reserva: " + e.getMessage(), null);
+        }
+    }
+
+    public Respuesta<Reserva> cancelarReserva(String id) throws SQLException {
+        return reservaDAO.cancelarReserva(id);
+    }
+
+    public List<Reserva> generarReporteVentas(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+        return reservaDAO.generarReporteVentas(fechaInicio, fechaFin);
+    }
+
+    public double calcularTotalVentas(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+        return reservaDAO.calcularTotalVentas(fechaInicio, fechaFin);
+    }
+
+    public List<Habitacion> generarReporteOcupacion(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+        return reservaDAO.generarReporteOcupacion(fechaInicio, fechaFin);
+    }
+
 
 }
