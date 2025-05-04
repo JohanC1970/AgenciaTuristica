@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.agenciaturistica.controller.GestionActividadesPaqueteController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #3498db;" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="lblTitulo" text="Gestión de Actividades del Paquete" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volver" style="-fx-background-color: #7f8c8d;" text="Volver" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #f5f6fa;">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                    <children>
+                        <VBox alignment="CENTER" prefHeight="120.0" prefWidth="400.0" style="-fx-background-color: #e1f5fe; -fx-border-color: #81d4fa; -fx-border-radius: 5;">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <Label text="Actividades Disponibles" textFill="#0277bd">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER" spacing="10.0">
+                                    <children>
+                                        <TextField fx:id="txtBuscarDisponibles" prefHeight="30.0" prefWidth="300.0" promptText="Buscar actividades...">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                        <Button fx:id="btnBuscarDisponibles" mnemonicParsing="false" onAction="#buscarActividadesDisponibles" prefHeight="30.0" style="-fx-background-color: #3498db;" text="Buscar" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="12.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" top="10.0" />
+                                    </VBox.margin>
+                                </HBox>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="120.0" prefWidth="400.0" style="-fx-background-color: #e8f5e9; -fx-border-color: #a5d6a7; -fx-border-radius: 5;">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <Label text="Actividades del Paquete" textFill="#2e7d32">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER" spacing="10.0">
+                                    <children>
+                                        <TextField fx:id="txtBuscarPaquete" prefHeight="30.0" prefWidth="300.0" promptText="Buscar actividades del paquete...">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </TextField>
+                                        <Button fx:id="btnBuscarPaquete" mnemonicParsing="false" onAction="#buscarActividadesPaquete" prefHeight="30.0" style="-fx-background-color: #2ecc71;" text="Buscar" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="12.0" />
+                                            </font>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" top="10.0" />
+                                    </VBox.margin>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                    <items>
+                        <VBox prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <Label text="Actividades Disponibles:">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                    <padding>
+                                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </Label>
+                                <TableView fx:id="tablaActividadesDisponibles" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colDisponiblesId" prefWidth="50.0" text="ID" />
+                                        <TableColumn fx:id="colDisponiblesNombre" prefWidth="150.0" text="Nombre" />
+                                        <TableColumn fx:id="colDisponiblesUbicacion" prefWidth="120.0" text="Ubicación" />
+                                        <TableColumn fx:id="colDisponiblesPrecio" prefWidth="100.0" text="Precio" />
+                                        <TableColumn fx:id="colDisponiblesDuracion" prefWidth="80.0" text="Duración (h)" />
+                                        <TableColumn fx:id="colDisponiblesFecha" prefWidth="120.0" text="Fecha" />
+                                        <TableColumn fx:id="colDisponiblesAcciones" prefWidth="120.0" text="Acciones" />
+                                    </columns>
+                                </TableView>
+                                <HBox alignment="CENTER_RIGHT" prefHeight="30.0" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <Label fx:id="lblTotalDisponibles" text="Total disponibles: 0">
+                                            <font>
+                                                <Font size="12.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <Label text="Actividades del Paquete:">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                    <padding>
+                                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </Label>
+                                <TableView fx:id="tablaActividadesPaquete" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colPaqueteId" prefWidth="50.0" text="ID" />
+                                        <TableColumn fx:id="colPaqueteNombre" prefWidth="150.0" text="Nombre" />
+                                        <TableColumn fx:id="colPaqueteUbicacion" prefWidth="120.0" text="Ubicación" />
+                                        <TableColumn fx:id="colPaquetePrecio" prefWidth="100.0" text="Precio" />
+                                        <TableColumn fx:id="colPaqueteDuracion" prefWidth="80.0" text="Duración (h)" />
+                                        <TableColumn fx:id="colPaqueteFecha" prefWidth="120.0" text="Fecha" />
+                                        <TableColumn fx:id="colPaqueteAcciones" prefWidth="120.0" text="Acciones" />
+                                    </columns>
+                                </TableView>
+                                <HBox alignment="CENTER_RIGHT" prefHeight="30.0" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <Label fx:id="lblTotalPaquete" text="Total en paquete: 0">
+                                            <font>
+                                                <Font size="12.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

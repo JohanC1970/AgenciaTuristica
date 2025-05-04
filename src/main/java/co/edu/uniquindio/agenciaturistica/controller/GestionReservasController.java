@@ -1120,9 +1120,9 @@ public class GestionReservasController implements Initializable {
                     "<p>Atentamente,<br>Agencia Turística</p>";
 
             // Enviar correo
-            EmailSender.enviarEmail(correoCliente, asunto, contenido, null);
+            EmailSender.enviarEmailReserva(correoCliente, asunto, contenido);
 
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             mostrarAlerta("Advertencia", "La reserva se canceló correctamente, pero no se pudo enviar la notificación por correo: " +
                     e.getMessage(), AlertType.WARNING);
         }
@@ -1338,51 +1338,6 @@ public class GestionReservasController implements Initializable {
 
         } catch (IOException e) {
             mostrarAlerta("Error", "Error al mostrar el reporte: " + e.getMessage(), AlertType.ERROR);
-        }
-    }
-
-    /**
-     * Método para volver a la pantalla anterior
-     */
-    @FXML
-    void volver(ActionEvent event) {
-        try {
-            // Volver a la pantalla anterior depende del rol del usuario actual
-            String fxmlPath;
-
-            switch (aplicacion.getUsuarioActual().getRol()) {
-                case ADMINISTRADOR:
-                    fxmlPath = "/co/edu/uniquindio/agenciaturistica/Administrador.fxml";
-                    break;
-                case EMPLEADO:
-                    fxmlPath = "/co/edu/uniquindio/agenciaturistica/Empleado.fxml";
-                    break;
-                default:
-                    mostrarAlerta("Error", "Rol no autorizado para esta operación", AlertType.ERROR);
-                    return;
-            }
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-
-            Object controller = loader.getController();
-
-            // Llamar al método correcto según el controlador
-            if (controller instanceof AdministradorController) {
-                ((AdministradorController) controller).setAplicacion(aplicacion);
-                ((AdministradorController) controller).inicializarInformacion();
-            } else if (controller instanceof EmpleadoController) {
-                ((EmpleadoController) controller).setAplicacion(aplicacion);
-                ((EmpleadoController) controller).inicializarInformacion();
-            }
-
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) btnVolver.getScene().getWindow();
-            stage.setScene(scene);
-            stage.centerOnScreen();
-
-        } catch (IOException e) {
-            mostrarAlerta("Error", "Error al volver a la pantalla anterior: " + e.getMessage(), AlertType.ERROR);
         }
     }
 

@@ -21,17 +21,6 @@
                     </HBox.margin>
                 </Label>
                 <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volver" style="-fx-background-color: #7f8c8d;" text="Volver" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                    <HBox.margin>
-                        <Insets right="20.0" />
-                    </HBox.margin>
-                </Button>
             </children>
         </HBox>
     </top>
@@ -112,7 +101,7 @@
                 </Label>
                 <ScrollPane fitToWidth="true" prefHeight="490.0" prefWidth="300.0" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
                     <content>
-                        <VBox spacing="15.0" style="white: #3498db;">
+                        <VBox spacing="15.0" style="-fx-background-color: #3498db;">
                             <children>
                                 <VBox spacing="5.0">
                                     <children>

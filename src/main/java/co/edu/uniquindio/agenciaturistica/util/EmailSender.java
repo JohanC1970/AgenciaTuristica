@@ -1,6 +1,7 @@
 package co.edu.uniquindio.agenciaturistica.util;
 
 import javax.mail.*;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
@@ -23,21 +24,7 @@ public class EmailSender {
         props.put("mail.smtp.port", "587");
     }
 
-
-    /**
-     * Método para enviar un correo electrónico
-     *
-     * @param destinatario  El destinatario del correo
-     * @param asunto        El asunto del correo
-     * @param rutaPlantilla La ruta de la plantilla HTML
-     * @param codigo        El código a incluir en el correo
-     * @return true si el correo se envió correctamente, false en caso contrario
-     * @throws MessagingException en caso de error al enviar el correo
-     * @throws IOException en caso de error al leer la plantilla
-     */
-
-    public static Respuesta<String> enviarEmail(String destinatario, String asunto, String rutaPlantilla, String codigo) throws MessagingException, IOException {
-        try {
+    public static Respuesta<String> enviarEmailCodigo(String destinatario, String asunto, String rutaPlantilla, String codigo) throws IOException, MessagingException {
             Session session = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(EMAIL, PASSWORD);
@@ -60,10 +47,45 @@ public class EmailSender {
 
             Transport.send(mensaje);
             return new Respuesta<>(true, "El correo se envió correctamente", null);
-        } catch (MessagingException | IOException e) {
-            e.printStackTrace();
-            return new Respuesta<>(false, "Error al enviar el correo: " + e.getMessage(), null);
-        }
     }
-    
+
+    public static Respuesta<String> enviarCorreoVerificacion(String destinatario, String codigo) throws MessagingException, IOException {
+        String asunto = "Código de verificación";
+        String rutaPlantilla = "/co/edu/uniquindio/agenciaturistica/emails/plantillaCodigoVerificacion.html";
+        return enviarEmailCodigo(destinatario, asunto, rutaPlantilla, codigo);
+    }
+
+
+    public static Respuesta<String> enviarCorreoRecuperacion(String destinatario, String codigo) throws MessagingException, IOException {
+        String asunto = "Código de recuperación de contraseña";
+        String rutaPlantilla = "/co/edu/uniquindio/agenciaturistica/emails/plantillaCodigoRecuperacionPassword.html";
+        return enviarEmailCodigo(destinatario, asunto, rutaPlantilla, codigo);
+    }
+
+    public static void enviarEmailReserva(String destino, String asunto, String contenido) throws MessagingException {
+
+        Properties propiedades = new Properties();
+        propiedades.put("mail.smtp.auth", "true");
+        propiedades.put("mail.smtp.starttls.enable", "true");
+        propiedades.put("mail.smtp.host", "smtp.gmail.com");
+        propiedades.put("mail.smtp.port", "587");
+
+        Session sesion = Session.getInstance(propiedades, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(EMAIL, PASSWORD);
+            }
+        });
+
+            Message mensaje = new MimeMessage(sesion);
+            mensaje.setFrom(new InternetAddress(EMAIL));
+            mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destino));
+            mensaje.setSubject(asunto);
+            mensaje.setText(contenido);
+
+            Transport.send(mensaje);
+    }
+
+
+
 }

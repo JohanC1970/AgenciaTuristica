@@ -217,12 +217,12 @@ public class VisualizadorReporteController implements Initializable {
                     contenido.append("<hr>");
                     contenido.append("<pre>").append(reporte.getContenido()).append("</pre>");
 
-                    // Enviar correo
-                    EmailSender.enviarEmail(email, asunto, contenido.toString(), null);
+                    // Enviar el correo
+                    EmailSender.enviarEmailReserva(email, asunto, contenido.toString());
 
                     mostrarAlerta("Éxito", "El reporte se ha enviado correctamente al correo: " + email, AlertType.INFORMATION);
 
-                } catch (MessagingException | IOException e) {
+                } catch (MessagingException e) {
                     mostrarAlerta("Error", "Error al enviar el reporte por correo: " + e.getMessage(), AlertType.ERROR);
                 }
             });

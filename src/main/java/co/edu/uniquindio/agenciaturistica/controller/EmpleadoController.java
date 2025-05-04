@@ -110,7 +110,7 @@ public class EmpleadoController implements Initializable {
             EmpleadoDashboardController controller = loader.getController();
             controller.setAplicacion(aplicacion);
             controller.inicializarDatos();
-
+            aplicacion.setUsuarioActual(usuarioActual);
             // Reemplazar el contenido central
             rootPane.setCenter(panel);
 

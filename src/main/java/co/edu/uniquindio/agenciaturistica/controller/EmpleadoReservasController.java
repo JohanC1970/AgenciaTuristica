@@ -536,30 +536,7 @@ public class EmpleadoReservasController implements Initializable {
      */
     @FXML
     void nuevaReserva(ActionEvent event) {
-        try {
-            // Cargar la vista de nueva reserva
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/agenciaturistica/NuevaReserva2.fxml"));
-            Parent root = loader.load();
-
-            // Configurar el controlador
-            NuevaReservaController controller = loader.getController();
-            controller.setAplicacion(aplicacion);
-            controller.inicializarDatos();
-
-            // Crear una nueva escena
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-            stage.setTitle("Nueva Reserva");
-            stage.setScene(scene);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-
-            // Recargar datos después de cerrar la ventana
-            inicializarDatos();
-
-        } catch (Exception e) {
-            mostrarAlerta("Error", "Error al abrir formulario de nueva reserva: " + e.getMessage(), AlertType.ERROR);
-        }
+        mostrarAlerta("Información", "Para crear una nueva reserva diríjase ", AlertType.INFORMATION);
     }
 
     /**
@@ -575,8 +552,7 @@ public class EmpleadoReservasController implements Initializable {
             // Configurar el controlador
             DetallesReservaController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.setModoVisualizacion(true);
-            controller.inicializarDatos(reserva);
+
 
             // Crear una nueva escena
             Scene scene = new Scene(root);

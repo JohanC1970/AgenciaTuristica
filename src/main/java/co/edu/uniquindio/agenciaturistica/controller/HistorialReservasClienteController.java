@@ -224,8 +224,7 @@ public class HistorialReservasClienteController implements Initializable {
 
             DetallesReservaController controller = loader.getController();
             controller.setAplicacion(aplicacion);
-            controller.setModoVisualizacion(true);
-            controller.inicializarDatos(reserva);
+
 
             Scene scene = new Scene(root);
             Stage stage = new Stage();

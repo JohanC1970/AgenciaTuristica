@@ -79,8 +79,7 @@ public class Sistema {
         try {
             Respuesta<String> actualizarCodigoVerificacion = usuarioDAO.actualizarCodigoVerificacion(destinatario, codigo);
             if (actualizarCodigoVerificacion.isExito()) {
-                String rutaPlantilla = "/co/edu/uniquindio/agenciaturistica/emails/plantillaCodigoVerificacion.html";
-                Respuesta<String> correoEnviado = EmailSender.enviarEmail(destinatario, "Código de verificación", rutaPlantilla, codigo);
+                Respuesta<String> correoEnviado = EmailSender.enviarCorreoVerificacion(destinatario, codigo);
                 if (correoEnviado.isExito()) {
                     return new Respuesta<>(true, "Código de verificación enviado correctamente", codigo);
                 } else {
@@ -109,8 +108,7 @@ public class Sistema {
         try {
             Respuesta<String> actualizarCodigoRecuperacion = usuarioDAO.actualizarCodigoRecuperacion(destinatario, codigo);
             if (actualizarCodigoRecuperacion.isExito()) {
-                String rutaPlantilla = "/co/edu/uniquindio/agenciaturistica/emails/plantillaCodigoRecuperacionPassword.html";
-                Respuesta<String> correoEnviado = EmailSender.enviarEmail(destinatario, "Código de recuperación de contraseña", rutaPlantilla, codigo);
+                Respuesta<String> correoEnviado = EmailSender.enviarCorreoRecuperacion(destinatario, codigo);
                 if (correoEnviado.isExito()) {
                     return new Respuesta<>(true, "Código de recuperación enviado correctamente", codigo);
                 } else {
@@ -120,11 +118,13 @@ public class Sistema {
             } else {
                 return actualizarCodigoRecuperacion;
             }
-        } catch (MessagingException | IOException | SQLException e) {
+        } catch (SQLException e) {
             usuarioDAO.revertirCodigoRecuperacion(destinatario);
             return new Respuesta<>(false, "Error al enviar el código de recuperación: " + e.getMessage(), null);
         }
     }
+
+
 
     /**
      * Este metodo permite generar un código aleatorio de 6 dígitos

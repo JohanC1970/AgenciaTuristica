@@ -495,33 +495,6 @@ public class GestionClientesController implements Initializable {
         clienteSeleccionado = null;
     }
 
-    /**
-     * Método para volver a la pantalla anterior
-     *
-     * @param event
-     */
-    @FXML
-    void volver(ActionEvent event) {
-        try {
-            // Cargar la pantalla anterior (depende del flujo de la aplicación)
-            // Por ahora, asumimos que volvemos al panel de administrador
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/co/edu/uniquindio/agenciaturistica/Administrador.fxml")
-            );
-            Parent root = loader.load();
-
-            AdministradorController controller = loader.getController();
-            controller.setAplicacion(aplicacion);
-            controller.inicializarInformacion();
-
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) btnVolver.getScene().getWindow();
-            stage.setScene(scene);
-            stage.centerOnScreen();
-        } catch (Exception e) {
-            mostrarAlerta("Error", "Error al volver a la pantalla anterior: " + e.getMessage(), AlertType.ERROR);
-        }
-    }
 
     /**
      * Método para mostrar alertas

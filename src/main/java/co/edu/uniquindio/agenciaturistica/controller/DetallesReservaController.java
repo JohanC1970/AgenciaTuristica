@@ -21,7 +21,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -42,92 +41,35 @@ import java.util.*;
 
 public class DetallesReservaController implements Initializable {
 
-    @FXML
-    private Button btnAgregarHabitacion;
-
-    @FXML
-    private Button btnBuscarCliente;
-
-    @FXML
-    private Button btnCancelar;
-
-    @FXML
-    private Button btnCerrar;
-
-    @FXML
-    private Button btnConfirmar;
-
-    @FXML
-    private Button btnGenerarVoucher;
-
-    @FXML
-    private Button btnGuardar;
-
-    @FXML
-    private Button btnQuitarHabitacion;
-
-    @FXML
-    private Button btnVerPaquete;
-
-    @FXML
-    private TableColumn<Habitacion, Integer> colHabCapacidad;
-
-    @FXML
-    private TableColumn<Habitacion, Integer> colHabId;
-
-    @FXML
-    private TableColumn<Habitacion, Double> colHabPrecio;
-
-    @FXML
-    private TableColumn<Habitacion, String> colHabTipo;
-
-    @FXML
-    private TableColumn<Habitacion, Double> colHabTotal;
-
-    @FXML
-    private ComboBox<Cliente> comboCliente;
-
-    @FXML
-    private ComboBox<EstadoReserva> comboEstado;
-
-    @FXML
-    private ComboBox<FormaPago> comboFormaPago;
-
-    @FXML
-    private ComboBox<PaqueteTuristico> comboPaquete;
-
-    @FXML
-    private DatePicker dateFechaFin;
-
-    @FXML
-    private DatePicker dateFechaInicio;
-
-    @FXML
-    private GridPane gridDatosCliente;
-
-    @FXML
-    private Label lblError;
-
-    @FXML
-    private Label lblTitulo;
-
-    @FXML
-    private TableView<Habitacion> tablaHabitaciones;
-
-    @FXML
-    private TextField txtContactoCliente;
-
-    @FXML
-    private TextField txtIdReserva;
-
-    @FXML
-    private TextField txtIdentificacionCliente;
-
-    @FXML
-    private TextField txtNombreCliente;
-
-    @FXML
-    private TextField txtPrecioTotal;
+    @FXML private Button btnAgregarHabitacion;
+    @FXML private Button btnBuscarCliente;
+    @FXML private Button btnCancelar;
+    @FXML private Button btnCerrar;
+    @FXML private Button btnConfirmar;
+    @FXML private Button btnGenerarVoucher;
+    @FXML private Button btnGuardar;
+    @FXML private Button btnQuitarHabitacion;
+    @FXML private Button btnVerPaquete;
+    @FXML private TableColumn<Habitacion, Integer> colHabCapacidad;
+    @FXML private TableColumn<Habitacion, Integer> colHabId;
+    @FXML private TableColumn<Habitacion, Double> colHabPrecio;
+    @FXML private TableColumn<Habitacion, String> colHabTipo;
+    @FXML private TableColumn<Habitacion, Double> colHabTotal;
+    @FXML private ComboBox<Cliente> comboCliente;
+    @FXML private ComboBox<EstadoReserva> comboEstado;
+    @FXML private ComboBox<FormaPago> comboFormaPago;
+    @FXML private ComboBox<PaqueteTuristico> comboPaquete;
+    @FXML private DatePicker dateFechaFin;
+    @FXML private DatePicker dateFechaInicio;
+    @FXML private GridPane gridDatosCliente;
+    @FXML private Label lblError;
+    @FXML private Label lblTitulo;
+    @FXML private TableView<Habitacion> tablaHabitaciones;
+    @FXML private TextField txtContactoCliente;
+    @FXML private TextField txtIdReserva;
+    @FXML private TextField txtIdentificacionCliente;
+    @FXML private TextField txtNombreCliente;
+    @FXML private TextField txtPrecioTotal;
 
     private Aplicacion aplicacion;
     private ObservableList<Habitacion> listaHabitaciones = FXCollections.observableArrayList();
@@ -137,20 +79,25 @@ public class DetallesReservaController implements Initializable {
     private boolean modoCreacion = true;
     private boolean modoVisualizacion = false;
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private Reserva reserva;
     private Empleado empleadoActual;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Configurar la tabla de habitaciones
         configurarTablaHabitaciones();
 
-        // Configurar combos
+        // Configurar combos y estados iniciales
         configurarCombos();
 
-        // Configurar listeners
+        // Configurar listeners para recalcular precios automáticamente
         configurarListeners();
+
+        // Inicializar con valores por defecto
+        dateFechaInicio.setValue(LocalDate.now());
+        dateFechaFin.setValue(LocalDate.now().plusDays(1));
+
+        // Ocultar mensajes de error inicialmente
+        lblError.setText("");
     }
 
     /**
@@ -227,7 +174,6 @@ public class DetallesReservaController implements Initializable {
         dateFechaInicio.valueProperty().addListener((obs, oldVal, newVal) -> {
             // Actualizar los precios totales de las habitaciones
             tablaHabitaciones.refresh();
-
             // Recalcular precio total
             calcularPrecioTotal();
         });
@@ -235,7 +181,6 @@ public class DetallesReservaController implements Initializable {
         dateFechaFin.valueProperty().addListener((obs, oldVal, newVal) -> {
             // Actualizar los precios totales de las habitaciones
             tablaHabitaciones.refresh();
-
             // Recalcular precio total
             calcularPrecioTotal();
         });
@@ -245,77 +190,197 @@ public class DetallesReservaController implements Initializable {
 
         // Listener para tabla de habitaciones que actualiza el precio total
         listaHabitaciones.addListener((javafx.collections.ListChangeListener.Change<? extends Habitacion> c) -> calcularPrecioTotal());
+
+        // Listener para cliente seleccionado
+        comboCliente.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                actualizarDatosCliente(newVal);
+            } else {
+                limpiarDatosCliente();
+            }
+        });
     }
 
-
+    /**
+     * Método para establecer la aplicación
+     */
     public void setAplicacion(Aplicacion aplicacion) {
         this.aplicacion = aplicacion;
-    }
-
-    /**
-     * Método para establecer el modo de creación o edición
-     */
-    public void setModoCreacion(boolean modoCreacion) {
-        this.modoCreacion = modoCreacion;
-    }
-
-    /**
-     * Método para establecer si se está en modo visualización (solo lectura)
-     */
-    public void setModoVisualizacion(boolean modoVisualizacion) {
-        this.modoVisualizacion = modoVisualizacion;
-    }
-
-    /**
-     * Método para inicializar los datos de la reserva
-     * @param reserva Reserva a editar o null si es una nueva reserva
-     */
-    public void inicializarDatos(Reserva reserva) {
-        try {
-            // Cargar listas de clientes y paquetes
-            cargarClientes();
-            cargarPaquetes();
-
-            // Configurar título y controles según el modo
-            if (modoCreacion) {
-                lblTitulo.setText("Crear Nueva Reserva");
-                btnConfirmar.setVisible(false);
-                btnGenerarVoucher.setVisible(false);
-
-                // Generar ID única para la nueva reserva
-                txtIdReserva.setText(UUID.randomUUID().toString());
-
-                // Establecer fechas por defecto
-                dateFechaInicio.setValue(LocalDate.now());
-                dateFechaFin.setValue(LocalDate.now().plusDays(1));
-
-            } else {
-                // Es modo edición o visualización
-                reservaActual = reserva;
-
-                if (modoVisualizacion) {
-                    lblTitulo.setText("Detalles de Reserva");
-
-                    // Deshabilitar campos en modo visualización
-                    deshabilitarCampos();
-                } else {
-                    lblTitulo.setText("Editar Reserva");
-                }
-
-                // Cargar datos de la reserva
-                cargarDatosReserva();
-
-                // Configurar botones según el estado de la reserva
-                configurarBotonesSegunEstado();
-            }
-
-        } catch (SQLException e) {
-            mostrarAlerta("Error", "Error al inicializar datos: " + e.getMessage(), AlertType.ERROR);
+        // Si hay un usuario actual, obtener el empleado
+        if (aplicacion.getUsuarioActual() instanceof Empleado) {
+            this.empleadoActual = (Empleado) aplicacion.getUsuarioActual();
         }
     }
 
     /**
-     * Método para cargar la lista de clientes
+     * Método para establecer el empleado actual
+     */
+    public void setEmpleado(Empleado empleado) {
+        this.empleadoActual = empleado;
+    }
+
+    /**
+     * Método para inicializar una nueva reserva
+     */
+    public void inicializarNuevaReserva() {
+        try {
+            // Establecer modo creación
+            modoCreacion = true;
+            modoVisualizacion = false;
+
+            // Establecer título
+            lblTitulo.setText("Crear Nueva Reserva");
+
+            // Generar ID única para la nueva reserva
+            txtIdReserva.setText(UUID.randomUUID().toString());
+
+            // Inicializar valores por defecto
+            txtPrecioTotal.setText("0.00");
+            comboEstado.setValue(EstadoReserva.PENDIENTE);
+            comboFormaPago.setValue(FormaPago.EFECTIVO);
+
+            // Configurar visibilidad de botones
+            btnConfirmar.setVisible(false);
+            btnCancelar.setVisible(false);
+            btnGenerarVoucher.setVisible(false);
+            btnGuardar.setVisible(true);
+
+            // Cargar datos necesarios
+            cargarClientes();
+            cargarPaquetes();
+
+            // Habilitar campos editables
+            habilitarCampos(true);
+
+        } catch (SQLException e) {
+            mostrarAlerta("Error", "Error al inicializar nueva reserva: " + e.getMessage(), AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Método para cargar una reserva existente
+     * @param reserva La reserva a cargar
+     * @param soloLectura Si es true, los campos estarán deshabilitados
+     */
+    public void cargarReserva(Reserva reserva, boolean soloLectura) {
+        try {
+            // Establecer modos
+            modoCreacion = false;
+            modoVisualizacion = soloLectura;
+
+            // Guardar referencia a la reserva
+            this.reservaActual = reserva;
+
+            // Establecer título según modo
+            lblTitulo.setText(soloLectura ? "Detalles de Reserva" : "Editar Reserva");
+
+            // Cargar datos necesarios
+            cargarClientes();
+            cargarPaquetes();
+
+            // Cargar datos de la reserva
+            txtIdReserva.setText(reserva.getId());
+            comboEstado.setValue(reserva.getEstadoReserva());
+            dateFechaInicio.setValue(reserva.getFechaInicio());
+            dateFechaFin.setValue(reserva.getFechaFin());
+            txtPrecioTotal.setText(String.format("%.2f", reserva.getPrecioTotal()));
+            comboFormaPago.setValue(reserva.getFormaPago());
+
+            // Seleccionar cliente
+            seleccionarCliente(reserva.getCliente());
+
+            // Seleccionar paquete si existe
+            if (reserva.getPaqueteTuristico() != null) {
+                seleccionarPaquete(reserva.getPaqueteTuristico());
+            } else {
+                // Seleccionar "Sin paquete"
+                comboPaquete.getSelectionModel().selectFirst();
+            }
+
+            // Cargar habitaciones
+            listaHabitaciones.clear();
+            if (reserva.getHabitaciones() != null && !reserva.getHabitaciones().isEmpty()) {
+                listaHabitaciones.addAll(reserva.getHabitaciones());
+            }
+
+            // Configurar controles según modo
+            habilitarCampos(!soloLectura);
+            configurarBotonesSegunEstado(reserva.getEstadoReserva());
+
+        } catch (SQLException e) {
+            mostrarAlerta("Error", "Error al cargar la reserva: " + e.getMessage(), AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Método para habilitar o deshabilitar campos según el modo
+     */
+    private void habilitarCampos(boolean editable) {
+        // Campos de texto siempre son de solo lectura
+        txtIdReserva.setEditable(false);
+        txtPrecioTotal.setEditable(false);
+        txtNombreCliente.setEditable(false);
+        txtIdentificacionCliente.setEditable(false);
+        txtContactoCliente.setEditable(false);
+
+        // Campos que cambian según el modo
+        comboEstado.setDisable(!editable);
+        dateFechaInicio.setDisable(!editable);
+        dateFechaFin.setDisable(!editable);
+        comboFormaPago.setDisable(!editable);
+        comboCliente.setDisable(!editable);
+        btnBuscarCliente.setDisable(!editable);
+        comboPaquete.setDisable(!editable);
+        btnVerPaquete.setDisable(false); // Siempre disponible
+        btnAgregarHabitacion.setDisable(!editable);
+        btnQuitarHabitacion.setDisable(!editable);
+    }
+
+    /**
+     * Método para configurar los botones según el estado de la reserva
+     */
+    private void configurarBotonesSegunEstado(EstadoReserva estado) {
+        // Por defecto, ocultar todos los botones de acción
+        btnGuardar.setVisible(false);
+        btnConfirmar.setVisible(false);
+        btnCancelar.setVisible(false);
+        btnGenerarVoucher.setVisible(false);
+
+        // En modo visualización, solo mostrar botones relevantes
+        if (modoVisualizacion) {
+            btnGenerarVoucher.setVisible(estado == EstadoReserva.CONFIRMADA || estado == EstadoReserva.COMPLETADA);
+            return;
+        }
+
+        // En modo creación, solo mostrar botón guardar
+        if (modoCreacion) {
+            btnGuardar.setVisible(true);
+            return;
+        }
+
+        // En modo edición, configurar según estado
+        switch (estado) {
+            case PENDIENTE:
+                btnGuardar.setVisible(true);
+                btnConfirmar.setVisible(true);
+                btnCancelar.setVisible(true);
+                break;
+            case CONFIRMADA:
+                btnGuardar.setVisible(true);
+                btnCancelar.setVisible(true);
+                btnGenerarVoucher.setVisible(true);
+                break;
+            case COMPLETADA:
+                btnGenerarVoucher.setVisible(true);
+                break;
+            case CANCELADA:
+                // No mostrar ningún botón de acción
+                break;
+        }
+    }
+
+    /**
+     * Método para cargar la lista de clientes desde la base de datos
      */
     private void cargarClientes() throws SQLException {
         listaClientes.clear();
@@ -324,7 +389,7 @@ public class DetallesReservaController implements Initializable {
         comboCliente.setItems(listaClientes);
 
         // Configurar cómo se muestran los clientes en el combo
-        comboCliente.setCellFactory(param -> new javafx.scene.control.ListCell<Cliente>() {
+        comboCliente.setCellFactory(param -> new ListCell<Cliente>() {
             @Override
             protected void updateItem(Cliente cliente, boolean empty) {
                 super.updateItem(cliente, empty);
@@ -336,7 +401,7 @@ public class DetallesReservaController implements Initializable {
             }
         });
 
-        comboCliente.setButtonCell(new javafx.scene.control.ListCell<Cliente>() {
+        comboCliente.setButtonCell(new ListCell<Cliente>() {
             @Override
             protected void updateItem(Cliente cliente, boolean empty) {
                 super.updateItem(cliente, empty);
@@ -350,31 +415,33 @@ public class DetallesReservaController implements Initializable {
     }
 
     /**
-     * Método para cargar la lista de paquetes turísticos
+     * Método para cargar la lista de paquetes turísticos desde la base de datos
      */
     private void cargarPaquetes() throws SQLException {
         listaPaquetes.clear();
         List<PaqueteTuristico> paquetes = ModelFactoryController.getInstance().getSistema().obtenerPaquetesTuristicos();
 
         // Filtrar solo paquetes disponibles con cupos
-        List<PaqueteTuristico> paquetesDisponibles = paquetes.stream()
-                .filter(p -> p.getCuposDisponibles() > 0)
-                .filter(p -> p.getFechaFin().isAfter(LocalDate.now()))
-                .toList();
-
-        listaPaquetes.addAll(paquetesDisponibles);
+        List<PaqueteTuristico> paquetesDisponibles = new ArrayList<>();
+        for (PaqueteTuristico p : paquetes) {
+            if (p.getCuposDisponibles() > 0 && p.getFechaFin().isAfter(LocalDate.now())) {
+                paquetesDisponibles.add(p);
+            }
+        }
 
         // Agregar una opción "Sin paquete"
         PaqueteTuristico sinPaquete = new PaqueteTuristico();
         sinPaquete.setId(-1);
         sinPaquete.setNombre("Sin paquete");
         sinPaquete.setPrecioBase(0);
-        listaPaquetes.add(0, sinPaquete);
+
+        listaPaquetes.add(sinPaquete);
+        listaPaquetes.addAll(paquetesDisponibles);
 
         comboPaquete.setItems(listaPaquetes);
 
         // Configurar cómo se muestran los paquetes en el combo
-        comboPaquete.setCellFactory(param -> new javafx.scene.control.ListCell<PaqueteTuristico>() {
+        comboPaquete.setCellFactory(param -> new ListCell<PaqueteTuristico>() {
             @Override
             protected void updateItem(PaqueteTuristico paquete, boolean empty) {
                 super.updateItem(paquete, empty);
@@ -386,7 +453,7 @@ public class DetallesReservaController implements Initializable {
             }
         });
 
-        comboPaquete.setButtonCell(new javafx.scene.control.ListCell<PaqueteTuristico>() {
+        comboPaquete.setButtonCell(new ListCell<PaqueteTuristico>() {
             @Override
             protected void updateItem(PaqueteTuristico paquete, boolean empty) {
                 super.updateItem(paquete, empty);
@@ -403,100 +470,79 @@ public class DetallesReservaController implements Initializable {
     }
 
     /**
-     * Método para cargar los datos de la reserva existente
+     * Método para seleccionar un cliente en el combobox
      */
-    private void cargarDatosReserva() {
-        if (reservaActual == null) return;
+    private void seleccionarCliente(Cliente cliente) {
+        if (cliente == null) return;
 
-        // Datos básicos
-        txtIdReserva.setText(reservaActual.getId());
-        comboEstado.setValue(reservaActual.getEstadoReserva());
-        dateFechaInicio.setValue(reservaActual.getFechaInicio());
-        dateFechaFin.setValue(reservaActual.getFechaFin());
-        txtPrecioTotal.setText(String.format("%.2f", reservaActual.getPrecioTotal()));
-        comboFormaPago.setValue(reservaActual.getFormaPago());
-
-        // Cliente
-        Cliente cliente = reservaActual.getCliente();
         for (Cliente c : listaClientes) {
             if (c.getIdentificacion().equals(cliente.getIdentificacion())) {
                 comboCliente.setValue(c);
+                actualizarDatosCliente(c);
                 break;
             }
-        }
-
-        // Actualizar datos del cliente
-        actualizarDatosCliente(cliente);
-
-        // Paquete turístico
-        PaqueteTuristico paquete = reservaActual.getPaqueteTuristico();
-        if (paquete != null) {
-            for (PaqueteTuristico p : listaPaquetes) {
-                if (p.getId() == paquete.getId()) {
-                    comboPaquete.setValue(p);
-                    break;
-                }
-            }
-        } else {
-            comboPaquete.getSelectionModel().selectFirst(); // Sin paquete
-        }
-
-        // Habitaciones
-        listaHabitaciones.clear();
-        if (reservaActual.getHabitaciones() != null) {
-            listaHabitaciones.addAll(reservaActual.getHabitaciones());
         }
     }
 
     /**
-     * Método para deshabilitar campos en modo visualización
+     * Método para seleccionar un paquete en el combobox
      */
-    private void deshabilitarCampos() {
-        // Deshabilitar campos editables
-        comboEstado.setDisable(true);
-        dateFechaInicio.setDisable(true);
-        dateFechaFin.setDisable(true);
-        txtPrecioTotal.setDisable(true);
-        comboFormaPago.setDisable(true);
-        comboCliente.setDisable(true);
-        btnBuscarCliente.setDisable(true);
-        comboPaquete.setDisable(true);
-        btnAgregarHabitacion.setDisable(true);
-        btnQuitarHabitacion.setDisable(true);
+    private void seleccionarPaquete(PaqueteTuristico paquete) {
+        if (paquete == null) return;
 
-        // Ocultar botones de acción no aplicables
-        btnGuardar.setVisible(false);
-
-        // Solo permitir generar voucher en modo visualización
-        btnGenerarVoucher.setVisible(true);
+        for (PaqueteTuristico p : listaPaquetes) {
+            if (p.getId() == paquete.getId()) {
+                comboPaquete.setValue(p);
+                break;
+            }
+        }
     }
 
     /**
-     * Método para configurar los botones según el estado de la reserva
+     * Método para actualizar los campos de información del cliente
      */
-    private void configurarBotonesSegunEstado() {
-        if (reservaActual == null) return;
-
-        EstadoReserva estado = reservaActual.getEstadoReserva();
-
-        switch (estado) {
-            case PENDIENTE:
-                btnConfirmar.setVisible(true);
-                btnCancelar.setVisible(true);
-                btnGuardar.setVisible(!modoVisualizacion);
-                break;
-            case CONFIRMADA:
-                btnConfirmar.setVisible(false);
-                btnCancelar.setVisible(true);
-                btnGuardar.setVisible(!modoVisualizacion);
-                break;
-            case COMPLETADA:
-            case CANCELADA:
-                btnConfirmar.setVisible(false);
-                btnCancelar.setVisible(false);
-                btnGuardar.setVisible(false);
-                break;
+    private void actualizarDatosCliente(Cliente cliente) {
+        if (cliente != null) {
+            txtNombreCliente.setText(cliente.getNombre() + " " + cliente.getApellido());
+            txtIdentificacionCliente.setText(cliente.getIdentificacion());
+            txtContactoCliente.setText(cliente.getCorreo() + " / " + cliente.getTelefono());
+            gridDatosCliente.setVisible(true);
         }
+    }
+
+    /**
+     * Método para limpiar los campos de información del cliente
+     */
+    private void limpiarDatosCliente() {
+        txtNombreCliente.setText("");
+        txtIdentificacionCliente.setText("");
+        txtContactoCliente.setText("");
+        gridDatosCliente.setVisible(false);
+    }
+
+    /**
+     * Método para calcular el precio total de la reserva
+     */
+    private void calcularPrecioTotal() {
+        double precioTotal = 0;
+
+        // Precio del paquete
+        PaqueteTuristico paquete = comboPaquete.getValue();
+        if (paquete != null && paquete.getId() > 0) {
+            precioTotal += paquete.getPrecioBase();
+        }
+
+        // Precio de las habitaciones
+        if (dateFechaInicio.getValue() != null && dateFechaFin.getValue() != null) {
+            long diasEstancia = ChronoUnit.DAYS.between(dateFechaInicio.getValue(), dateFechaFin.getValue());
+            if (diasEstancia < 1) diasEstancia = 1; // Mínimo 1 día
+
+            for (Habitacion habitacion : listaHabitaciones) {
+                precioTotal += habitacion.getPrecioPorNoche() * diasEstancia;
+            }
+        }
+
+        txtPrecioTotal.setText(String.format("%.2f", precioTotal));
     }
 
     /**
@@ -568,24 +614,7 @@ public class DetallesReservaController implements Initializable {
     }
 
     /**
-     * Método para actualizar los datos del cliente seleccionado
-     */
-    private void actualizarDatosCliente(Cliente cliente) {
-        if (cliente != null) {
-            txtNombreCliente.setText(cliente.getNombre() + " " + cliente.getApellido());
-            txtIdentificacionCliente.setText(cliente.getIdentificacion());
-            txtContactoCliente.setText(cliente.getCorreo() + " / " + cliente.getTelefono());
-            gridDatosCliente.setVisible(true);
-        } else {
-            txtNombreCliente.setText("");
-            txtIdentificacionCliente.setText("");
-            txtContactoCliente.setText("");
-            gridDatosCliente.setVisible(false);
-        }
-    }
-
-    /**
-     * Método para abrir la ventana de selección de habitaciones
+     * Método para agregar una habitación a la reserva
      */
     @FXML
     void agregarHabitacion(ActionEvent event) {
@@ -730,32 +759,7 @@ public class DetallesReservaController implements Initializable {
     }
 
     /**
-     * Método para calcular el precio total de la reserva
-     */
-    private void calcularPrecioTotal() {
-        double precioTotal = 0;
-
-        // Precio del paquete
-        PaqueteTuristico paquete = comboPaquete.getValue();
-        if (paquete != null && paquete.getId() > 0) {
-            precioTotal += paquete.getPrecioBase();
-        }
-
-        // Precio de las habitaciones
-        if (dateFechaInicio.getValue() != null && dateFechaFin.getValue() != null) {
-            long diasEstancia = ChronoUnit.DAYS.between(dateFechaInicio.getValue(), dateFechaFin.getValue());
-            if (diasEstancia < 1) diasEstancia = 1; // Mínimo 1 día
-
-            for (Habitacion habitacion : listaHabitaciones) {
-                precioTotal += habitacion.getPrecioPorNoche() * diasEstancia;
-            }
-        }
-
-        txtPrecioTotal.setText(String.format("%.2f", precioTotal));
-    }
-
-    /**
-     * Método para guardar la reserva (crear o modificar)
+     * Método para guardar la reserva
      */
     @FXML
     void guardarReserva(ActionEvent event) {
@@ -765,12 +769,11 @@ public class DetallesReservaController implements Initializable {
 
         try {
             // Crear objeto Reserva con los datos del formulario
-            Reserva reserva = new Reserva();
+            Reserva reserva = modoCreacion ? new Reserva() : reservaActual;
 
+            // En modo creación, usamos el ID generado
             if (modoCreacion) {
                 reserva.setId(txtIdReserva.getText().trim());
-            } else {
-                reserva.setId(reservaActual.getId());
             }
 
             reserva.setFechaInicio(dateFechaInicio.getValue());
@@ -780,8 +783,10 @@ public class DetallesReservaController implements Initializable {
             reserva.setFormaPago(comboFormaPago.getValue());
             reserva.setCliente(comboCliente.getValue());
 
-            // Asignar empleado (usuario actual si es empleado o administrador)
-            if (aplicacion.getUsuarioActual() instanceof Empleado) {
+            // Asignar empleado
+            if (empleadoActual != null) {
+                reserva.setEmpleado(empleadoActual);
+            } else if (aplicacion.getUsuarioActual() instanceof Empleado) {
                 reserva.setEmpleado((Empleado) aplicacion.getUsuarioActual());
             }
 
@@ -789,13 +794,15 @@ public class DetallesReservaController implements Initializable {
             PaqueteTuristico paqueteSeleccionado = comboPaquete.getValue();
             if (paqueteSeleccionado != null && paqueteSeleccionado.getId() > 0) {
                 reserva.setPaqueteTuristico(paqueteSeleccionado);
+            } else {
+                reserva.setPaqueteTuristico(null);
             }
 
             // Asignar habitaciones
             reserva.setHabitaciones(new ArrayList<>(listaHabitaciones));
 
+            // Crear o modificar según el modo
             Respuesta<Reserva> respuesta;
-
             if (modoCreacion) {
                 respuesta = ModelFactoryController.getInstance().getSistema().crearReserva(reserva);
             } else {
@@ -846,7 +853,10 @@ public class DetallesReservaController implements Initializable {
         }
 
         // Validar que haya al menos un paquete o una habitación
-        if ((comboPaquete.getValue() == null || comboPaquete.getValue().getId() <= 0) && listaHabitaciones.isEmpty()) {
+        PaqueteTuristico paquete = comboPaquete.getValue();
+        boolean tienePaquete = paquete != null && paquete.getId() > 0;
+
+        if (!tienePaquete && listaHabitaciones.isEmpty()) {
             errores.append("- Debe seleccionar al menos un paquete o una habitación\n");
         }
 
@@ -861,10 +871,14 @@ public class DetallesReservaController implements Initializable {
             return false;
         }
 
+        // Limpiar mensaje de error
+        lblError.setText("");
         return true;
     }
 
-
+    /**
+     * Método para confirmar una reserva
+     */
     @FXML
     void confirmarReserva(ActionEvent event) {
         try {
@@ -875,7 +889,7 @@ public class DetallesReservaController implements Initializable {
             }
 
             if (reservaActual.getEstadoReserva() != EstadoReserva.PENDIENTE) {
-                mostrarAlerta("Error", "Solo se pueden confirmar reservas pendientes", AlertType.ERROR);
+                mostrarAlerta("Error", "Solo se pueden confirmar reservas en estado PENDIENTE", AlertType.ERROR);
                 return;
             }
 
@@ -894,12 +908,14 @@ public class DetallesReservaController implements Initializable {
                 if (respuesta.isExito()) {
                     mostrarAlerta("Éxito", "Reserva confirmada exitosamente", AlertType.INFORMATION);
 
-                    // Actualizar estado en la interfaz
+                    // Actualizar reserva actual
                     reservaActual = respuesta.getData();
+
+                    // Actualizar estado en la interfaz
                     comboEstado.setValue(reservaActual.getEstadoReserva());
 
                     // Configurar botones según nuevo estado
-                    configurarBotonesSegunEstado();
+                    configurarBotonesSegunEstado(reservaActual.getEstadoReserva());
 
                     // Enviar notificación por correo
                     enviarNotificacionConfirmacion(reservaActual);
@@ -949,12 +965,14 @@ public class DetallesReservaController implements Initializable {
                 if (respuesta.isExito()) {
                     mostrarAlerta("Éxito", "Reserva cancelada exitosamente", AlertType.INFORMATION);
 
-                    // Actualizar estado en la interfaz
+                    // Actualizar reserva actual
                     reservaActual = respuesta.getData();
+
+                    // Actualizar estado en la interfaz
                     comboEstado.setValue(reservaActual.getEstadoReserva());
 
                     // Configurar botones según nuevo estado
-                    configurarBotonesSegunEstado();
+                    configurarBotonesSegunEstado(reservaActual.getEstadoReserva());
 
                     // Enviar notificación por correo
                     enviarNotificacionCancelacion(reservaActual);
@@ -968,7 +986,7 @@ public class DetallesReservaController implements Initializable {
     }
 
     /**
-     * Método para generar y exportar el voucher de la reserva
+     * Método para generar un voucher de la reserva
      */
     @FXML
     void generarVoucher(ActionEvent event) {
@@ -1109,9 +1127,9 @@ public class DetallesReservaController implements Initializable {
     }
 
     /**
-     * Método para enviar el voucher por correo al cliente
+     * Método para enviar el voucher por correo
      */
-    private void enviarVoucherPorCorreo(String contenidoVoucher) {
+    private void enviarVoucherPorCorreo(String voucher) {
         try {
             Cliente cliente = reservaActual.getCliente();
             String correoDestino = cliente.getCorreo();
@@ -1127,16 +1145,16 @@ public class DetallesReservaController implements Initializable {
             String contenidoHtml = "<h2>Voucher de Reserva</h2>" +
                     "<p>Estimado/a " + cliente.getNombre() + " " + cliente.getApellido() + ",</p>" +
                     "<p>Adjunto encontrará el voucher de su reserva.</p>" +
-                    "<pre>" + contenidoVoucher + "</pre>" +
+                    "<pre>" + voucher + "</pre>" +
                     "<p>Gracias por elegir nuestros servicios.</p>" +
                     "<p>Atentamente,<br>Agencia Turística</p>";
 
             // Enviar correo
-            EmailSender.enviarEmail(correoDestino, asunto, contenidoHtml, null);
+            EmailSender.enviarEmailReserva(correoDestino, asunto, contenidoHtml);
 
             mostrarAlerta("Éxito", "Voucher enviado exitosamente al correo: " + correoDestino, AlertType.INFORMATION);
 
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             mostrarAlerta("Error", "Error al enviar el voucher por correo: " + e.getMessage(), AlertType.ERROR);
         }
     }
@@ -1193,9 +1211,9 @@ public class DetallesReservaController implements Initializable {
             contenido.append("<p>Atentamente,<br>Agencia Turística</p>");
 
             // Enviar correo
-            EmailSender.enviarEmail(correoDestino, asunto, contenido.toString(), null);
+            EmailSender.enviarEmailReserva(correoDestino, asunto, contenido.toString());
 
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             // Solo registrar el error, no mostrar alerta para no interrumpir el flujo principal
             System.err.println("Error al enviar notificación por correo: " + e.getMessage());
         }
@@ -1249,9 +1267,9 @@ public class DetallesReservaController implements Initializable {
             contenido.append("<p>Atentamente,<br>Agencia Turística</p>");
 
             // Enviar correo
-            EmailSender.enviarEmail(correoDestino, asunto, contenido.toString(), null);
+            EmailSender.enviarEmailReserva(correoDestino, asunto, contenido.toString());
 
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             // Solo registrar el error, no mostrar alerta para no interrumpir el flujo principal
             System.err.println("Error al enviar notificación de confirmación por correo: " + e.getMessage());
         }
@@ -1294,16 +1312,16 @@ public class DetallesReservaController implements Initializable {
             contenido.append("<p>Atentamente,<br>Agencia Turística</p>");
 
             // Enviar correo
-            EmailSender.enviarEmail(correoDestino, asunto, contenido.toString(), null);
+            EmailSender.enviarEmailReserva(correoDestino, asunto, contenido.toString());
 
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             // Solo registrar el error, no mostrar alerta para no interrumpir el flujo principal
             System.err.println("Error al enviar notificación de cancelación por correo: " + e.getMessage());
         }
     }
 
     /**
-     * Método para cerrar la ventana actual
+     * Método para cerrar la ventana
      */
     @FXML
     void cerrarVentana(ActionEvent event) {
@@ -1313,9 +1331,6 @@ public class DetallesReservaController implements Initializable {
 
     /**
      * Método para mostrar alertas
-     * @param titulo
-     * @param mensaje
-     * @param tipo
      */
     private void mostrarAlerta(String titulo, String mensaje, AlertType tipo) {
         Alert alert = new Alert(tipo);
@@ -1323,34 +1338,5 @@ public class DetallesReservaController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-    }
-
-
-    public void inicializarNuevaReserva() {
-        modoCreacion = true;
-        txtIdReserva.setText("N/A");
-        txtPrecioTotal.setText("0.00");
-        comboEstado.setValue(EstadoReserva.PENDIENTE);
-        comboFormaPago.setValue(FormaPago.EFECTIVO);
-        listaHabitaciones.clear();
-        reservaActual = null;
-
-        // Limpiar campos de cliente
-        comboCliente.setValue(null);
-        txtNombreCliente.setText("");
-        txtIdentificacionCliente.setText("");
-        txtContactoCliente.setText("");
-        gridDatosCliente.setVisible(false);
-
-        // Limpiar campos de paquete
-        comboPaquete.setValue(null);
-    }
-
-    public void setEmpleado(Empleado empleadoActual) {
-        this.empleadoActual = empleadoActual;
-    }
-
-    public void cargarReserva(Reserva reserva, boolean b) {
-        this.reserva = reserva;
     }
 }

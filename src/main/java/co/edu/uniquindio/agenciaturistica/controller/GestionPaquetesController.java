@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import co.edu.uniquindio.agenciaturistica.application.Aplicacion;
 import co.edu.uniquindio.agenciaturistica.model.Enums.Rol;
 import co.edu.uniquindio.agenciaturistica.model.PaqueteTuristico;
+import co.edu.uniquindio.agenciaturistica.model.Usuario;
 import co.edu.uniquindio.agenciaturistica.util.Respuesta;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -19,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -32,6 +34,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -128,6 +131,7 @@ public class GestionPaquetesController implements Initializable {
     private ObservableList<PaqueteTuristico> listaPaquetes = FXCollections.observableArrayList();
     private PaqueteTuristico paqueteSeleccionado;
     private boolean modoEdicion = false;
+    private Usuario usuarioActual;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -243,7 +247,7 @@ public class GestionPaquetesController implements Initializable {
      */
     public void setAplicacion(Aplicacion aplicacion) {
         this.aplicacion = aplicacion;
-
+        this.usuarioActual = aplicacion.getUsuarioActual();
         // Cargar paquetes
         cargarPaquetes();
     }
@@ -310,7 +314,47 @@ public class GestionPaquetesController implements Initializable {
      */
     @FXML
     void gestionarActividades(ActionEvent event) {
+        if (paqueteSeleccionado == null) {
+            mostrarAlerta("Aviso", "Por favor, seleccione un paquete", AlertType.WARNING);
+            return;
+        }
 
+        try {
+            // Cargar la pantalla de gestión de actividades del paquete
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionActividadesPaquete.fxml")
+            );
+            Parent root = loader.load();
+
+            // Obtener el controlador y establecer el paquete seleccionado
+            GestionActividadesPaqueteController controller = loader.getController();
+            controller.setDatos(aplicacion, paqueteSeleccionado);
+
+            // Mostrar la ventana
+            Stage stage = new Stage();
+            stage.setTitle("Gestión de Actividades - " + paqueteSeleccionado.getNombre());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Al cerrar la ventana, recargar el paquete para asegurar que tenemos los datos actualizados
+            try {
+                Respuesta<PaqueteTuristico> respuesta = ModelFactoryController.getInstance()
+                        .getSistema().buscarPaquetePorId(paqueteSeleccionado.getId());
+
+                if (respuesta.isExito()) {
+                    // Actualizar el paquete seleccionado con los datos más recientes
+                    paqueteSeleccionado = respuesta.getData();
+
+                    // Recargar la lista de paquetes para actualizar la vista
+                    cargarPaquetes();
+                }
+            } catch (SQLException e) {
+                mostrarAlerta("Error", "Error al actualizar los datos del paquete: " + e.getMessage(), AlertType.ERROR);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al abrir la ventana de gestión de actividades: " + e.getMessage(), AlertType.ERROR);
+        }
     }
 
     /**
@@ -319,7 +363,47 @@ public class GestionPaquetesController implements Initializable {
      */
     @FXML
     void gestionarHospedajes(ActionEvent event) {
+        if (paqueteSeleccionado == null) {
+            mostrarAlerta("Aviso", "Por favor, seleccione un paquete", AlertType.WARNING);
+            return;
+        }
 
+        try {
+            // Cargar la pantalla de gestión de hospedajes del paquete
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/co/edu/uniquindio/agenciaturistica/GestionHospedajesPaquete.fxml")
+            );
+            Parent root = loader.load();
+
+            // Obtener el controlador y establecer el paquete seleccionado
+            GestionHospedajesPaqueteController controller = loader.getController();
+            controller.setDatos(aplicacion, paqueteSeleccionado);
+
+            // Mostrar la ventana
+            Stage stage = new Stage();
+            stage.setTitle("Gestión de Hospedajes - " + paqueteSeleccionado.getNombre());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Al cerrar la ventana, recargar el paquete para asegurar que tenemos los datos actualizados
+            try {
+                Respuesta<PaqueteTuristico> respuesta = ModelFactoryController.getInstance()
+                        .getSistema().buscarPaquetePorId(paqueteSeleccionado.getId());
+
+                if (respuesta.isExito()) {
+                    // Actualizar el paquete seleccionado con los datos más recientes
+                    paqueteSeleccionado = respuesta.getData();
+
+                    // Recargar la lista de paquetes para actualizar la vista
+                    cargarPaquetes();
+                }
+            } catch (SQLException e) {
+                mostrarAlerta("Error", "Error al actualizar los datos del paquete: " + e.getMessage(), AlertType.ERROR);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al abrir la ventana de gestión de hospedajes: " + e.getMessage(), AlertType.ERROR);
+        }
     }
 
     /**
@@ -624,49 +708,7 @@ public class GestionPaquetesController implements Initializable {
         modoEdicion = false;
     }
 
-    /**
-     * Método para volver a la pantalla anterior
-     * @param event
-     */
-    @FXML
-    void volver(ActionEvent event) {
-        try {
 
-            if(aplicacion.getEmpleadoActual().getRol() == Rol.EMPLEADO){
-                // Cargar la pantalla anterior (en este caso el panel de empleado)
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/co/edu/uniquindio/agenciaturistica/Empleado.fxml")
-                );
-                Parent root = loader.load();
-
-                EmpleadoController controller = loader.getController();
-                controller.setAplicacion(aplicacion);
-                controller.inicializarInformacion();
-                Scene scene = new Scene(root);
-                Stage stage = (Stage) btnVolver.getScene().getWindow();
-                stage.setScene(scene);
-                stage.centerOnScreen();
-
-            }else{
-                // Cargar la pantalla anterior (en este caso el panel de administrador)
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/co/edu/uniquindio/agenciaturistica/Administrador.fxml")
-                );
-                Parent root = loader.load();
-
-                AdministradorController controller = loader.getController();
-                controller.setAplicacion(aplicacion);
-                controller.inicializarInformacion();
-
-                Scene scene = new Scene(root);
-                Stage stage = (Stage) btnVolver.getScene().getWindow();
-                stage.setScene(scene);
-                stage.centerOnScreen();
-            }
-        } catch (Exception e) {
-            mostrarAlerta("Error", "Error al volver a la pantalla anterior: " + e.getMessage(), AlertType.ERROR);
-        }
-    }
 
     /**
      * Método para mostrar alertas

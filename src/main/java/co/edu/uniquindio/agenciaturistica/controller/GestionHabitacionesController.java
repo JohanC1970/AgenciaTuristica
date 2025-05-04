@@ -526,16 +526,6 @@ public class GestionHabitacionesController implements Initializable {
         modoEdicion = false;
     }
 
-    /**
-     * Método para volver a la pantalla anterior
-     * @param event
-     */
-    @FXML
-    void volver(ActionEvent event) {
-        // Cerrar la ventana actual
-        Stage stage = (Stage) btnVolver.getScene().getWindow();
-        stage.close();
-    }
 
     /**
      * Método para mostrar alertas
